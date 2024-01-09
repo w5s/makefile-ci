@@ -26,32 +26,32 @@ RUBY_ENABLED ?= true
 endif
 
 # Include variables
-include $(SELF_DIR)variables.mk
-include $(SELF_DIR)dotenv.mk
-include $(SELF_DIR)rescue.mk
-include $(SELF_DIR)cache.mk
+include $(SELF_DIR)src/variables.mk
+include $(SELF_DIR)src/dotenv.mk
+include $(SELF_DIR)src/rescue.mk
+include $(SELF_DIR)src/cache.mk
 
 ifneq ($(ASDF_ENABLED),)
-include $(SELF_DIR)asdf.mk
+include $(SELF_DIR)src/asdf.mk
 endif
 
 ifneq ($(DOCKER_ENABLED),)
-include $(SELF_DIR)docker.mk
+include $(SELF_DIR)src/docker.mk
 endif
 
 ifneq ($(DEVCONTAINER_ENABLED),)
-include $(SELF_DIR)devcontainer.mk
+include $(SELF_DIR)src/devcontainer.mk
 endif
 
-include $(SELF_DIR)githooks.mk
+include $(SELF_DIR)src/githooks.mk
 
 ifneq ($(NODEJS_ENABLED),)
-include $(SELF_DIR)node.mk
+include $(SELF_DIR)src/node.mk
 endif
 
 ifneq ($(RUBY_ENABLED),)
-include $(SELF_DIR)ruby.mk
+include $(SELF_DIR)src/ruby.mk
 endif
 
-include $(SELF_DIR)workflow.mk
+include $(SELF_DIR)src/workflow.mk
 
