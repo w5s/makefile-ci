@@ -1,0 +1,43 @@
+
+## Enable Docker buildx feature
+DOCKER_BUILDKIT ?= 1
+
+DOCKER_LABEL_VARIABLES := \
+	CI_COMMIT_AUTHOR \
+	CI_COMMIT_REF_NAME \
+	CI_COMMIT_REF_SLUG \
+	CI_COMMIT_SHA \
+  CI_COMMIT_SHORT_SHA \
+	CI_COMMIT_TIMESTAMP \
+	CI_JOB_ID \
+	CI_JOB_URL \
+	CI_PIPELINE_ID \
+	CI_PIPELINE_IID \
+	CI_PIPELINE_URL \
+	CI_PROJECT_ID \
+	CI_PROJECT_PATH_SLUG \
+	CI_PROJECT_URL \
+	CI_REPOSITORY_URL \
+	CI_RUNNER_ID \
+	CI_RUNNER_REVISION \
+	CI_RUNNER_TAGS \
+	GITLAB_USER_EMAIL \
+	GITLAB_USER_ID \
+  GITLAB_USER_LOGIN \
+	GITLAB_USER_NAME
+
+# Construct --label flags
+DOCKER_LABEL_ARGS := $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
+
+DOCKER_BUILD_ARGS_VARIABLES := \
+	NODEJS_VERSION \
+	RUBY_VERSION
+
+DOCKER_BUILD_ARGS := $(foreach var,$(DOCKER_BUILD_ARGS_VARIABLES),$(if $($(var)), --build-arg $(var)="$($(var))"))
+
+DOCKER_BUILD := docker build
+
+PHONY += docker-build
+docker-build:
+	$(info Building Docker Image )
+	@$(DOCKER_BUILD)$(DOCKER_LABEL_ARGS)$(DOCKER_BUILD_ARGS) -t $(CI_APPLICATION_TAG) .
