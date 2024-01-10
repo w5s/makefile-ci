@@ -22,6 +22,10 @@ CONTAINER_RC_TAG ?= rc-$(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)
 ## Release Candidate Docker sub image
 CONTAINER_RC_TARGET ?= runner
 
+## Release Docker image repository
+CONTAINER_RELEASE_IMAGE ?= $(CI_REGISTRY_IMAGE)
+## Release Docker image tag
+CONTAINER_RELEASE_TAG ?= 1.$(shell echo "$(CI_PIPELINE_CREATED_AT)" | cut -c 1-19 | sed 's/[:-]//g;s/T/./g')-sha.$(CI_COMMIT_SHORT_SHA)
 
 DOCKER_LABEL_VARIABLES := \
 	CI_COMMIT_AUTHOR \
@@ -48,15 +52,17 @@ DOCKER_LABEL_VARIABLES := \
 	GITLAB_USER_NAME
 
 # Construct --label flags
-DOCKER_LABEL_ARGS := $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
 
+# DOCKER_BUILD_ARGS
 DOCKER_BUILD_ARGS_VARIABLES := \
 	NODEJS_VERSION \
 	RUBY_VERSION
 
 DOCKER_BUILD_ARGS := $(foreach var,$(DOCKER_BUILD_ARGS_VARIABLES),$(if $($(var)), --build-arg $(var)="$($(var))"))
-
-DOCKER_BUILD_CACHE_ARGS := --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-1}
+# Append inline cache
+DOCKER_BUILD_ARGS += --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-1}
+# Append labels
+DOCKER_BUILD_ARGS += $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
 
 DOCKER_BUILD := docker build
 
@@ -67,20 +73,22 @@ PHONY += docker-image-dev
 docker-image-dev:
 	$(info Building CI Image)
 	@$(DOCKER_BUILD)\
-		$(DOCKER_LABEL_ARGS)\
 		$(DOCKER_BUILD_ARGS)\
-		$(DOCKER_BUILD_CACHE_ARGS) \
 		--target "$(CONTAINER_CI_TARGET)" \
 		--tag "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
 		.
 
 PHONY += docker-image-dev
-docker-image-rc:
+docker-image-rc: docker-image-dev
 	$(info Building RC Image)
 	@$(DOCKER_BUILD)\
-		$(DOCKER_LABEL_ARGS)\
 		$(DOCKER_BUILD_ARGS)\
-		$(DOCKER_BUILD_CACHE_ARGS) \
 		--target "$(CONTAINER_RC_TARGET)" \
 		--tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" \
 		.
+
+PHONY += docker-release
+docker-release:
+  docker pull "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)"
+	docker tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
+  docker push "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
