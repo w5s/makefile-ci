@@ -92,8 +92,12 @@ export CI_COMMIT_TAG
 CI_JOB_ID ?= 0
 export CI_JOB_ID
 
+## The UTC datetime when the pipeline was created
+CI_PIPELINE_CREATED_AT ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+export CI_PIPELINE_CREATED_AT
+
 ## The UTC datetime when a job started
-CI_JOB_STARTED_AT ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+CI_JOB_STARTED_AT ?= $(CI_PIPELINE_CREATED_AT)
 export CI_JOB_STARTED_AT
 
 ## The name of the environment for this job
