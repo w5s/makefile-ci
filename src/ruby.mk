@@ -26,7 +26,7 @@ ${BUNDLE_PATH}: ${BUNDLE_CACHE_PATH}
 	@[ ! -z "${BUNDLE_PATH}" ] && ${MKDIRP} "${BUNDLE_PATH}"
 
 # Run bundle install only if yarn.lock or package-lock.json has changed
-$(MAKE_CACHE_PATH)/bundle-install: $(MAKE_CACHE_PATH) ${BUNDLE_CACHE_PATH} ${BUNDLE_PATH} $(MAKEFILE_LIST) $(wildcard Gemfile.lock)
+$(MAKE_CACHE_PATH)/bundle-install: $(MAKE_CACHE_PATH) ${BUNDLE_CACHE_PATH} ${BUNDLE_PATH} $(MAKEFILE_LIST) $(wildcard Gemfile*)
 	@if [ -z "$(BUNDLE_PATH)" ]; then \
 		${BUNDLE} config unset --local path; \
 	else \
@@ -48,14 +48,14 @@ dependencies__ruby:
 	@${MAKE} bundle-install-cached
 
 # Add rubocop to `make lint`
-PHONY += lint__ruby
-lint__ruby: bundle-install-cached
+PHONY += lint__rubocop
+lint__rubocop: bundle-install-cached
 	$(info Lint Ruby sources...)
 	@${RUBOCOP}
 
 # Add rubocop to `make format`
-PHONY += format__ruby
-format__ruby: bundle-install-cached
+PHONY += format__rubocop
+format__rubocop: bundle-install-cached
 	$(info Format Ruby sources...)
 	@${RUBOCOP} -a
 
