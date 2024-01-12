@@ -47,6 +47,8 @@ dependencies__ruby:
 # 	@${RM} $(MAKE_CACHE_PATH)/bundle-install
 	@${MAKE} bundle-install-cached
 
+# Rubocop targets
+ifneq ($(RUBOCOP_ENABLED),)
 # Add rubocop to `make lint`
 PHONY += lint__rubocop
 lint__rubocop: bundle-install-cached
@@ -58,6 +60,7 @@ PHONY += format__rubocop
 format__rubocop: bundle-install-cached
 	$(info Format Ruby sources...)
 	@${RUBOCOP} -a
+endif
 
 # Add rspec to `make test`
 PHONY += test__rspec
