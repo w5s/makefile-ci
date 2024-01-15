@@ -1,6 +1,8 @@
 
 ## Enable Docker buildx feature
 DOCKER_BUILDKIT ?= 1
+## Docker Socket path
+DOCKER_SOCKET_PATH ?= /var/run/docker.sock
 
 ifneq ($(CI_REGISTRY_IMAGE),)
 ## Docker registry to pull/push images
