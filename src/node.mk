@@ -32,15 +32,10 @@ else
 	endif
 endif
 
-# Run node install only if yarn.lock or package-lock.json has changed
-$(MAKE_CACHE_PATH)/node-install: $(MAKE_CACHE_PATH) $(wildcard yarn.lock) $(wildcard package-lock.json)
-	@${NODEJS_INSTALL}
-	@${TOUCH} $@
-
-# Shortcut to cached job
-PHONY += node-install-cached
-node-install-cached: $(MAKE_CACHE_PATH)/node-install
+_node-install-required:
+# TODO: implement this
 	@:
+
 
 PHONY += prepare__yarn
 prepare__yarn:
@@ -53,23 +48,23 @@ prepare__yarn:
 PHONY += dependencies__node
 dependencies__node:
 	$(info Install NodeJS dependencies...)
-	@${MAKE} node-install-cached
+	@${NODEJS_INSTALL}
 
 # Add `npm run lint` to `make lint`
 PHONY += lint__node
-lint__node: node-install-cached
+lint__node: _node-install-required
 	$(info Lint NodeJS sources...)
 	@npm run lint --if-present
 
 # Add `npm run test` to `make test`
 PHONY += format__node
-format__node: node-install-cached
+format__node: _node-install-required
 	$(info Format NodeJS sources...)
 	@npm run format --if-present
 
 # Add npm test to `make test`
 PHONY += test__node
-test__node: node-install-cached
+test__node: _node-install-required
 	$(info Test NodeJS sources...)
 	@npm run test
 
