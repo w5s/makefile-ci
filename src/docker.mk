@@ -67,6 +67,7 @@ DOCKER_BUILD_ARGS += --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-
 DOCKER_BUILD_ARGS += $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
 
 DOCKER_BUILD := docker build
+DOCKER_PUSH := docker push
 
 PHONY += docker-image-dev
 docker-build: docker-image-dev docker-image-rc
@@ -77,6 +78,9 @@ docker-image-dev:
 	@$(DOCKER_BUILD)\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(CONTAINER_CI_TARGET)" \
+		--cache-from "$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
+		--cache-from "$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_CI_TARGET)" \
+		--tag "$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
 		--tag "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
 		.
 
@@ -86,6 +90,7 @@ docker-image-rc: docker-image-dev
 	@$(DOCKER_BUILD)\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(CONTAINER_RC_TARGET)" \
+		--cache-from "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
 		--tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" \
 		.
 
