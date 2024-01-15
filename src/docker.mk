@@ -15,7 +15,6 @@ CONTAINER_CI_TARGET ?= builder
 ## CI Docker image tag
 CONTAINER_CI_TAG ?= $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_CI_TARGET)
 
-
 ## Release Candidate Docker image repository
 CONTAINER_RC_IMAGE ?= $(CONTAINER_CI_IMAGE)
 ## Release Candidate Docker target image
@@ -66,16 +65,13 @@ DOCKER_BUILD_ARGS += --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-
 # Append labels
 DOCKER_BUILD_ARGS += $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
 
-DOCKER_BUILD := docker build
-DOCKER_PUSH := docker push
-
 PHONY += docker-image-dev
 docker-build: docker-image-dev docker-image-rc
 
 PHONY += docker-image-dev
 docker-image-dev:
 	$(info Building CI Image)
-	@$(DOCKER_BUILD)\
+	@docker build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(CONTAINER_CI_TARGET)" \
 		--cache-from "$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
@@ -87,7 +83,7 @@ docker-image-dev:
 PHONY += docker-image-dev
 docker-image-rc: docker-image-dev
 	$(info Building RC Image)
-	@$(DOCKER_BUILD)\
+	@docker build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(CONTAINER_RC_TARGET)" \
 		--cache-from "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
