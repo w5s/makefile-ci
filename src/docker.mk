@@ -10,17 +10,18 @@ export DOCKER_REGISTRY
 
 ## CI Docker image repository
 CONTAINER_CI_IMAGE ?= $(DOCKER_REGISTRY)dev
-## CI Docker image tag
-CONTAINER_CI_TAG ?= ci-$(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)
-## CI Docker sub image
+## CI Docker target image
 CONTAINER_CI_TARGET ?= builder
+## CI Docker image tag
+CONTAINER_CI_TAG ?= $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_CI_TARGET)
+
 
 ## Release Candidate Docker image repository
 CONTAINER_RC_IMAGE ?= $(CONTAINER_CI_IMAGE)
-## Release Candidate Docker image tag
-CONTAINER_RC_TAG ?= rc-$(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)
-## Release Candidate Docker sub image
+## Release Candidate Docker target image
 CONTAINER_RC_TARGET ?= runner
+## Release Candidate Docker image tag
+CONTAINER_RC_TAG ?= $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_RC_TARGET)
 
 ## Release Docker image repository
 CONTAINER_RELEASE_IMAGE ?= $(CI_REGISTRY_IMAGE)
