@@ -92,6 +92,16 @@ docker-image-rc: docker-image-dev
 		--tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" \
 		.
 
+docker-run-%:
+	$(info Open docker container...)
+#	docker pull "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" --quiet
+	@docker run \
+		--rm \
+		--pull missing \
+		--volume "$(shell $(PWD))":/app \
+		--volume "$(DOCKER_SOCKET_PATH)":/var/run/docker.sock \
+		"$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" sh -c "make $*"
+
 PHONY += docker-release
 docker-release:
   docker pull "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)"
