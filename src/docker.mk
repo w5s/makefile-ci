@@ -76,7 +76,7 @@ docker-image-dev:
 		--target "$(CONTAINER_CI_TARGET)" \
 		--cache-from "$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
 		--cache-from "$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_CI_TARGET)" \
-		--tag "$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
+		--tag "$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
 		--tag "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
 		.
 
