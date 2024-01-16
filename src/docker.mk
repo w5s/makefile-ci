@@ -69,11 +69,11 @@ DOCKER_RUN_ARGS :=
 # Append env
 DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $(var)))
 
-PHONY += docker-image-dev
-docker-build: docker-image-dev docker-image-rc
+PHONY += docker-build
+docker-build: docker-image-ci docker-image-rc
 
 PHONY += docker-image-dev
-docker-image-dev:
+docker-image-ci:
 	$(info Building CI Image)
 	@docker build\
 		$(DOCKER_BUILD_ARGS)\
