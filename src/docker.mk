@@ -72,7 +72,7 @@ DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $
 PHONY += docker-build
 docker-build: docker-image-ci docker-image-rc
 
-PHONY += docker-image-dev
+PHONY += docker-image-ci
 docker-image-ci:
 	$(info Building CI Image)
 	@docker build\
@@ -84,8 +84,8 @@ docker-image-ci:
 		--tag "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
 		.
 
-PHONY += docker-image-dev
-docker-image-rc: docker-image-dev
+PHONY += docker-image-rc
+docker-image-rc: docker-image-ci
 	$(info Building RC Image)
 	@docker build\
 		$(DOCKER_BUILD_ARGS)\
