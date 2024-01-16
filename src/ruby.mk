@@ -31,7 +31,7 @@ _bundle-install-required:
 # Add `bundle install` to `make install`
 PHONY += dependencies__ruby
 dependencies__ruby:
-	$(info Install Ruby dependencies...)
+	$(info [Ruby] Install dependencies...)
 	@if [ -z "$(BUNDLE_PATH)" ]; then \
 		${BUNDLE} config unset --local path; \
 	else \
@@ -44,20 +44,20 @@ ifneq ($(RUBOCOP_ENABLED),)
 # Add rubocop to `make lint`
 PHONY += lint__rubocop
 lint__rubocop: _bundle-install-required
-	$(info Lint Ruby sources...)
+	$(info [Ruby] Lint sources...)
 	@${RUBOCOP}
 
 # Add rubocop to `make format`
 PHONY += format__rubocop
 format__rubocop: _bundle-install-required
-	$(info Format Ruby sources...)
+	$(info [Ruby] Format sources...)
 	@${RUBOCOP} -a
 endif
 
 # Add rspec to `make test`
 PHONY += test__rspec
 test__rspec: _bundle-install-required
-	$(info Test Ruby sources...)
+	$(info [Ruby] Test sources...)
 	@${RAKE} spec
 
 endif

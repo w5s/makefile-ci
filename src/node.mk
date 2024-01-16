@@ -47,25 +47,25 @@ prepare__yarn:
 # Add `npm install` to `make install`
 PHONY += dependencies__node
 dependencies__node:
-	$(info Install NodeJS dependencies...)
+	$(info [NodeJS] Install dependencies...)
 	@${NODEJS_INSTALL}
 
 # Add `npm run lint` to `make lint`
 PHONY += lint__node
 lint__node: _node-install-required
-	$(info Lint NodeJS sources...)
+	$(info [NodeJS] Lint sources...)
 	@npm run lint --if-present
 
 # Add `npm run test` to `make test`
 PHONY += format__node
 format__node: _node-install-required
-	$(info Format NodeJS sources...)
+	$(info [NodeJS] Format sources...)
 	@npm run format --if-present
 
 # Add npm test to `make test`
 PHONY += test__node
 test__node: _node-install-required
-	$(info Test NodeJS sources...)
+	$(info [NodeJS] Test sources...)
 	@npm run test
 
 endif

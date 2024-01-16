@@ -97,7 +97,7 @@ docker-image-rc: docker-image-dev
 		.
 
 docker-run-%:
-	$(info Open docker container...)
+	$(info [Docker] Open container...)
 #	docker pull "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" --quiet
 	@docker run\
 		$(DOCKER_RUN_ARGS) \
