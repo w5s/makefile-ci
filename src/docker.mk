@@ -53,6 +53,10 @@ DOCKER_LABEL_VARIABLES := \
   GITLAB_USER_LOGIN \
 	GITLAB_USER_NAME
 
+DOCKER_ENV_VARIABLES := $(DOCKER_LABEL_VARIABLES) \
+	TIMEOUT_SECONDS \
+	DOCKER_SOCKET_PATH
+
 # Construct --label flags
 
 # DOCKER_BUILD_ARGS
@@ -66,6 +70,10 @@ DOCKER_BUILD_ARGS := $(foreach var,$(DOCKER_BUILD_ARGS_VARIABLES),$(if $($(var))
 DOCKER_BUILD_ARGS += --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-1}
 # Append labels
 DOCKER_BUILD_ARGS += $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
+
+DOCKER_RUN_ARGS :=
+# Append env
+DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $(var)))
 
 PHONY += docker-image-dev
 docker-build: docker-image-dev docker-image-rc
@@ -95,7 +103,8 @@ docker-image-rc: docker-image-dev
 docker-run-%:
 	$(info Open docker container...)
 #	docker pull "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" --quiet
-	@docker run \
+	@docker run\
+		$(DOCKER_RUN_ARGS) \
 		--rm \
 		--pull missing \
 		--volume "$(shell $(PWD))":/app \
