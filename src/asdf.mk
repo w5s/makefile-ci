@@ -1,4 +1,14 @@
 ASDF := asdf
+# Variables defined by this asdf script
+ASDF_VARIABLES := \
+	RUBY_VERSION \
+	NODEJS_VERSION
+
+ifneq ($(RUBY_ENABLED),)
+## Bundler gem version
+BUNDLER_VERSION ?= $(shell if [ -e Gemfile.lock ]; then grep "BUNDLED WITH" Gemfile.lock -A 1 | grep -v "BUNDLED WITH" | tr -d "[:space:]"; else echo ""; fi)
+ASDF_VARIABLES += BUNDLER_VERSION
+endif
 
 ifneq ($(ASDF_ENABLED),)
 
