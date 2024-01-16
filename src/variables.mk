@@ -19,6 +19,11 @@ PROJECT_GITHOOKS_PATH ?= .githooks
 # Register CI variables (for docker env export for example)
 CI_VARIABLES :=
 
+## Available for all jobs executed in CI/CD. true when available.
+CI ?=
+export CI
+CI_VARIABLES += CI
+
 ## The name of the project’s default branch.
 CI_DEFAULT_BRANCH ?= $(notdir $(shell ${GIT} rev-parse --abbrev-ref origin/HEAD))
 export CI_DEFAULT_BRANCH
