@@ -14,46 +14,14 @@ PROJECT_VENDOR_PATH ?= vendor
 PROJECT_GITHOOKS_PATH ?= .githooks
 
 
-# Git variables
-
-## Current git branch
-GIT_BRANCH ?= $(shell ${GIT} rev-parse --abbrev-ref HEAD)
-## Current git commit
-GIT_COMMIT ?= $(shell ${GIT} rev-parse HEAD)
-## Possible default git branches
-GIT_DEFAULT_BRANCH_LIST := main master next dev develop $(shell ${GIT} config --get 'init.defaultBranch')
-## Default git branch (default: main)
-GIT_DEFAULT_BRANCH ?= $(notdir $(shell ${GIT} rev-parse --abbrev-ref origin/HEAD))
-## List of git remotes
-GIT_REMOTES ?= $(shell git remote -v | awk '{ print $$1; }' | sort | uniq)
-
-# https://github.com/semantic-release/git#environment-variables
-
-## The author name associated with commit
-GIT_AUTHOR_NAME ?=
-export GIT_AUTHOR_NAME
-
-## The author email associated with commit
-GIT_AUTHOR_EMAIL ?=
-export GIT_AUTHOR_EMAIL
-
-## The committer name associated with commit
-GIT_COMMITTER_NAME ?=
-export GIT_COMMITTER_NAME
-
-## The committer email associated with commit
-GIT_COMMITTER_EMAIL ?=
-export GIT_COMMITTER_EMAIL
-
-
 # Continuous Integration
 
 ## The name of the project’s default branch.
-CI_DEFAULT_BRANCH ?= ${GIT_DEFAULT_BRANCH}
+CI_DEFAULT_BRANCH ?= $(notdir $(shell ${GIT} rev-parse --abbrev-ref origin/HEAD))
 export CI_DEFAULT_BRANCH
 
 ## The commit branch name
-CI_COMMIT_BRANCH ?= ${GIT_BRANCH}
+CI_COMMIT_BRANCH ?= $(shell ${GIT} rev-parse --abbrev-ref HEAD)
 export CI_COMMIT_BRANCH
 
 ## The author of the commit in Name <email> format
@@ -164,6 +132,37 @@ export CI_APPLICATION_REPOSITORY
 ## The docker image tag
 CI_APPLICATION_TAG ?= $(or $(CI_COMMIT_TAG), $(CI_COMMIT_SHA))
 export CI_APPLICATION_TAG
+
+# Git variables
+
+## Current git branch
+GIT_BRANCH ?= $(CI_COMMIT_BRANCH)
+## Current git commit
+GIT_COMMIT ?= $(CI_COMMIT_SHA)
+## Possible default git branches
+GIT_DEFAULT_BRANCH_LIST := main master next dev develop $(shell ${GIT} config --get 'init.defaultBranch')
+## Default git branch (default: main)
+GIT_DEFAULT_BRANCH ?= $(CI_DEFAULT_BRANCH)
+## List of git remotes
+GIT_REMOTES ?= $(shell git remote -v | awk '{ print $$1; }' | sort | uniq)
+
+# https://github.com/semantic-release/git#environment-variables
+
+## The author name associated with commit
+GIT_AUTHOR_NAME ?=
+export GIT_AUTHOR_NAME
+
+## The author email associated with commit
+GIT_AUTHOR_EMAIL ?=
+export GIT_AUTHOR_EMAIL
+
+## The committer name associated with commit
+GIT_COMMITTER_NAME ?=
+export GIT_COMMITTER_NAME
+
+## The committer email associated with commit
+GIT_COMMITTER_EMAIL ?=
+export GIT_COMMITTER_EMAIL
 
 # Debug
 ##
