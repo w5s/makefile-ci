@@ -57,9 +57,7 @@ DOCKER_ENV_VARIABLES := $(CI_VARIABLES) \
 
 # DOCKER_BUILD_ARGS
 DOCKER_BUILD_ARGS_VARIABLES := \
-	BUNDLER_VERSION \
-	NODEJS_VERSION \
-	RUBY_VERSION
+	$(ASDF_VARIABLES)
 
 DOCKER_BUILD_ARGS := $(foreach var,$(DOCKER_BUILD_ARGS_VARIABLES),$(if $($(var)), --build-arg $(var)="$($(var))"))
 # Append inline cache
