@@ -1,8 +1,10 @@
 
 ## Enable Docker buildx feature
 DOCKER_BUILDKIT ?= 1
+export DOCKER_BUILDKIT
 ## Docker Socket path
 DOCKER_SOCKET_PATH ?= /var/run/docker.sock
+export DOCKER_SOCKET_PATH
 ## Enable CLI hints (docker scout)
 DOCKER_CLI_HINTS ?= false
 export DOCKER_CLI_HINTS
