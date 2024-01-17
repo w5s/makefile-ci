@@ -9,8 +9,8 @@ export DOCKER_SOCKET_PATH
 DOCKER_CLI_HINTS ?= false
 export DOCKER_CLI_HINTS
 ## Docker build progress display
-DOCKER_BUILD_PROGRESS ?= auto
-export DOCKER_BUILD_PROGRESS
+DOCKER_BUILDKIT_PROGRESS ?= auto
+export DOCKER_BUILDKIT_PROGRESS
 ## Docker build platform (ex: linux/arm64)
 DOCKER_BUILD_PLATFORMS ?=
 export DOCKER_BUILD_PLATFORMS
@@ -76,7 +76,7 @@ DOCKER_BUILD_ARGS += --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-
 # Append labels
 DOCKER_BUILD_ARGS += $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
 # Append progress arguments
-DOCKER_BUILD_ARGS += --progress=$(DOCKER_BUILD_PROGRESS)
+DOCKER_BUILD_ARGS += --progress=$(DOCKER_BUILDKIT_PROGRESS)
 # Append build platform
 ifneq ("$(DOCKER_BUILD_PLATFORMS)","")
 DOCKER_BUILD_ARGS += --platform="$(DOCKER_BUILD_PLATFORMS)"
