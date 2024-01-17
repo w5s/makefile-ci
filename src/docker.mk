@@ -3,6 +3,9 @@
 DOCKER_BUILDKIT ?= 1
 ## Docker Socket path
 DOCKER_SOCKET_PATH ?= /var/run/docker.sock
+## Enable CLI hints (docker scout)
+DOCKER_CLI_HINTS ?= false
+export DOCKER_CLI_HINTS
 
 ifneq ($(CI_REGISTRY_IMAGE),)
 ## Docker registry to pull/push images
