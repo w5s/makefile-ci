@@ -37,6 +37,7 @@ endif
 
 ifneq ($(DOCKER_ENABLED),)
 include $(SELF_DIR)src/docker.mk
+include $(SELF_DIR)src/docker-compose.mk
 endif
 
 ifneq ($(DEVCONTAINER_ENABLED),)
