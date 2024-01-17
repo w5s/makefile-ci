@@ -2,12 +2,18 @@
 ## Enable Docker buildx feature
 DOCKER_BUILDKIT ?= 1
 export DOCKER_BUILDKIT
-## Docker Socket path
+## Docker Daemon socket path
 DOCKER_SOCKET_PATH ?= /var/run/docker.sock
 export DOCKER_SOCKET_PATH
 ## Enable CLI hints (docker scout)
 DOCKER_CLI_HINTS ?= false
 export DOCKER_CLI_HINTS
+## Docker build progress display
+DOCKER_BUILD_PROGRESS ?= auto
+export DOCKER_BUILD_PROGRESS
+## Docker build platform (ex: linux/arm64)
+DOCKER_BUILD_PLATFORMS ?=
+export DOCKER_BUILD_PLATFORMS
 
 ifneq ($(CI_REGISTRY_IMAGE),)
 ## Docker registry to pull/push images
@@ -69,18 +75,24 @@ DOCKER_BUILD_ARGS := $(foreach var,$(DOCKER_BUILD_ARGS_VARIABLES),$(if $($(var))
 DOCKER_BUILD_ARGS += --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-1}
 # Append labels
 DOCKER_BUILD_ARGS += $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
+# Append progress arguments
+DOCKER_BUILD_ARGS += --progress=$(DOCKER_BUILD_PROGRESS)
+# Append build platform
+ifneq ("$(DOCKER_BUILD_PLATFORMS)","")
+DOCKER_BUILD_ARGS += --platform="$(DOCKER_BUILD_PLATFORMS)"
+endif
 
 DOCKER_RUN_ARGS :=
 # Append env
 DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $(var)))
 
 PHONY += docker-build
-docker-build: docker-image-ci docker-image-rc
+docker-build: docker-image-dev docker-image-rc
 
-PHONY += docker-image-ci
-docker-image-ci:
+PHONY += docker-image-dev
+docker-image-dev:
 	$(info Building CI Image)
-	@docker build\
+	@docker buildx build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(CONTAINER_CI_TARGET)" \
 		--cache-from "$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
@@ -90,9 +102,9 @@ docker-image-ci:
 		.
 
 PHONY += docker-image-rc
-docker-image-rc: docker-image-ci
+docker-image-rc: docker-image-dev
 	$(info Building RC Image)
-	@docker build\
+	@docker buildx build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(CONTAINER_RC_TARGET)" \
 		--cache-from "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
