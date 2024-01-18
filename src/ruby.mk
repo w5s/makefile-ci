@@ -58,6 +58,7 @@ endif
 PHONY += test__rspec
 test__rspec: _bundle-install-required
 	$(info [Ruby] Test sources...)
+	@${RAKE} db:migrate || echo "Warning: Migration failed"
 	@${RAKE} spec
 
 endif
