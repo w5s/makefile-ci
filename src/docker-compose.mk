@@ -13,7 +13,7 @@ docker-compose-run:
 # $(COMPOSE) -f $(COMPOSE_FILE) exec web /bin/bash -c "$(DOCKER_COMMAND)"
 	@trap "echo '[Docker Compose] Stopping...';$(COMPOSE) -f $(COMPOSE_FILE) down --volumes --remove-orphans &>/dev/null" EXIT; \
 	echo '[Docker Compose] Starting...'; \
-	$(COMPOSE) -f $(COMPOSE_FILE) up --detach --quiet-pull --exclude-services $(COMPOSE_MAIN_SERVICE); \
+	$(COMPOSE) -f $(COMPOSE_FILE) up --detach --quiet-pull --wait; \
 	echo '[Docker Compose] Executing command...'; \
 	$(COMPOSE) -f $(COMPOSE_FILE) run $(COMPOSE_MAIN_SERVICE) $(DOCKER_COMMAND)
 
