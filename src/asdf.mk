@@ -26,11 +26,11 @@ $(MAKE_CACHE_PATH)/asdf-install: $(MAKE_CACHE_PATH) .tool-versions
 	@${ASDF} install
 	@${TOUCH} $@
 
-PHONY += asdf-install-cached
+.PHONY: asdf-install-cached
 asdf-install-cached: $(MAKE_CACHE_PATH)/asdf-install
 	@:
 
 # Add `asdf install` to `make prepare`
-PHONY += prepare__asdf
-prepare__asdf: asdf-install-cached
+.PHONY: .prepare
+.prepare:: asdf-install-cached
 endif

@@ -29,8 +29,8 @@ _bundle-install-required:
 	@bundle check
 
 # Add `bundle install` to `make install`
-PHONY += dependencies__ruby
-dependencies__ruby:
+.PHONY: ruby-install
+ruby-install:
 	$(info [Ruby] Install dependencies...)
 	@if [ -z "$(BUNDLE_PATH)" ]; then \
 		${BUNDLE} config unset --local path; \
@@ -38,27 +38,30 @@ dependencies__ruby:
 		${BUNDLE} config set --local path $(BUNDLE_PATH); \
 	fi
 	@${BUNDLE_INSTALL}
+.dependencies:: ruby-install # Add `bundle install` to `make install`
 
 # Rubocop targets
 ifneq ($(RUBOCOP_ENABLED),)
-# Add rubocop to `make lint`
-PHONY += lint__rubocop
-lint__rubocop: _bundle-install-required
+
+.PHONY: ruby-lint
+ruby-lint: _bundle-install-required
 	$(info [Ruby] Lint sources...)
 	@${RUBOCOP}
+.lint:: ruby-lint # Add rubocop to `make lint`
 
-# Add rubocop to `make format`
-PHONY += format__rubocop
-format__rubocop: _bundle-install-required
+.PHONY: ruby-format
+ruby-format: _bundle-install-required
 	$(info [Ruby] Format sources...)
 	@${RUBOCOP} -a
+.format:: ruby-format # Add rubocop to `make format`
+
 endif
 
-# Add rspec to `make test`
-PHONY += test__rspec
-test__rspec: _bundle-install-required
+.PHONY: ruby-test
+ruby-test: _bundle-install-required
 	$(info [Ruby] Test sources...)
 	@${RAKE} db:migrate || echo "Warning: Migration failed"
 	@${RAKE} spec
+.test:: ruby-test # Add rspec to `make test`
 
 endif

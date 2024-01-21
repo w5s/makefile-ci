@@ -37,35 +37,35 @@ _node-install-required:
 	@:
 
 
-PHONY += prepare__yarn
-prepare__yarn:
+.PHONY: prepare
+.prepare::
 	@if ! command yarn --version &>/dev/null; then \
 		echo "Installing yarn..."; \
 		npm install -g yarn; \
 	fi
 
-# Add `npm install` to `make install`
-PHONY += dependencies__node
-dependencies__node:
+.PHONY: node-install
+node-install:
 	$(info [NodeJS] Install dependencies...)
 	@${NODEJS_INSTALL}
+.dependencies:: node-install	# Add `npm install` to `make install`
 
-# Add `npm run lint` to `make lint`
-PHONY += lint__node
-lint__node: _node-install-required
+.PHONY: node-lint
+node-lint: _node-install-required
 	$(info [NodeJS] Lint sources...)
 	@npm run lint --if-present
+.lint::	node-lint # Add `npm run lint` to `make lint`
 
-# Add `npm run test` to `make test`
-PHONY += format__node
-format__node: _node-install-required
+.PHONY: node-format
+node-format: _node-install-required
 	$(info [NodeJS] Format sources...)
 	@npm run format --if-present
+.format:: node-format # Add `npm run test` to `make test`
 
-# Add npm test to `make test`
-PHONY += test__node
-test__node: _node-install-required
+.PHONY: node-test
+node-test: _node-install-required
 	$(info [NodeJS] Test sources...)
 	@npm run test
+.test:: node-test # Add npm test to `make test`
 
 endif

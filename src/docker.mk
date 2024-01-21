@@ -86,10 +86,10 @@ DOCKER_RUN_ARGS :=
 # Append env
 DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $(var)))
 
-PHONY += docker-build
+.PHONY: docker-build
 docker-build: docker-image-dev docker-image-rc
 
-PHONY += docker-image-dev
+.PHONY: docker-image-dev
 docker-image-dev:
 	$(info Building CI Image)
 	@docker buildx build\
@@ -101,7 +101,7 @@ docker-image-dev:
 		--tag "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
 		.
 
-PHONY += docker-image-rc
+.PHONY: docker-image-rc
 docker-image-rc: docker-image-dev
 	$(info Building RC Image)
 	@docker buildx build\
@@ -111,7 +111,7 @@ docker-image-rc: docker-image-dev
 		--tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" \
 		.
 
-PHONY += docker-run
+.PHONY: docker-run
 docker-run:
 	$(info [Docker] Open container...)
 	@docker run\
@@ -122,11 +122,11 @@ docker-run:
 		--volume "$(DOCKER_SOCKET_PATH)":/var/run/docker.sock \
 		"$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" /bin/bash -c "set -euo pipefail; $(DOCKER_COMMAND)"
 
-PHONY += docker-make-%
+.PHONY: docker-make-%
 docker-make-%:
 	@$(MAKE) docker-run DOCKER_COMMAND="make $*"
 
-PHONY += docker-release
+.PHONY: docker-release
 docker-release:
   docker pull "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)"
 	docker tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"

@@ -1,5 +1,18 @@
 # Project paths
 
+ifeq ($(MKDIRP),)
+	MKDIRP = mkdir -p
+endif
+ifeq ($(TOUCH),)
+	TOUCH = touch
+endif
+ifeq ($(GIT),)
+	GIT = git
+endif
+ifeq ($(BUNDLE),)
+	BUNDLE = bundle
+endif
+
 ## Project root path
 PROJECT_PATH ?= $(CURDIR)
 ## Project cache path

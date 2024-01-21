@@ -8,8 +8,10 @@ $(MAKE_CACHE_PATH):
 # make should not remove these files
 .PRECIOUS: $(MAKE_CACHE_PATH)/%
 
-# Add clear cache to `make clean` target
-PHONY += clean__cache
-clean__cache:
+.PHONY: .cache-clean
+.cache-clean:
 	$(info Clean cache...)
 	@$(RM) -rf $(MAKE_CACHE_PATH)
+
+# Add clear cache to `make clean` target
+.clean:: .cache-clean

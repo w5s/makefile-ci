@@ -25,7 +25,7 @@ devcontainer-start: devcontainer-up
 	@${DEVCONTAINER} exec $(DEVCONTAINER_FLAGS) /bin/zsh
 
 # Add `@devcontainers/cli` to `make prepare`
-PHONY += prepare__devcontainers
-prepare__devcontainers: devcontainers-cli
+.PHONY: .prepare
+.prepare:: devcontainers-cli
 endif
 
