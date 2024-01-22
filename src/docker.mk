@@ -90,26 +90,25 @@ DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $
 docker-build: docker-image-dev docker-image-rc
 
 .PHONY: docker-image-dev
-docker-image-dev:
-	$(info Building CI Image)
-	@docker buildx build\
-		$(DOCKER_BUILD_ARGS)\
-		--target "$(CONTAINER_CI_TARGET)" \
-		--cache-from "$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
-		--cache-from "$(CONTAINER_CI_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_CI_TARGET)" \
-		--tag "$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET)" \
-		--tag "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
-		.
+docker-image-dev: \
+	export DOCKER_BUILD_CACHE_FROM = \
+		$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET) \
+		$(CONTAINER_CI_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_CI_TARGET)
+  export DOCKER_BUILD_TAGS = \
+		$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET) \
+		$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)
+  export DOCKER_BUILD_TARGET = $(CONTAINER_CI_TARGET)
+docker-image-dev: .docker-pull-cache .docker-build
 
 .PHONY: docker-image-rc
 docker-image-rc: docker-image-dev
-	$(info Building RC Image)
-	@docker buildx build\
-		$(DOCKER_BUILD_ARGS)\
-		--target "$(CONTAINER_RC_TARGET)" \
-		--cache-from "$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
-		--tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" \
-		.
+docker-image-rc: \
+	export DOCKER_BUILD_CACHE_FROM = \
+		$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)
+	export DOCKER_BUILD_TAGS = \
+		$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)
+	export DOCKER_BUILD_TARGET = $(CONTAINER_RC_TARGET)
+docker-image-rc: .docker-build
 
 .PHONY: docker-run
 docker-run:
@@ -131,3 +130,22 @@ docker-release:
   docker pull "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)"
 	docker tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
   docker push "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
+
+# Generic target for building an image
+.PHONY: .docker-build
+.docker-build:
+	$(info [Docker] Building Image)
+	@docker buildx build\
+		$(DOCKER_BUILD_ARGS)\
+		--target "$(DOCKER_BUILD_TARGET)" \
+		$(foreach cache, $(DOCKER_BUILD_CACHE_FROM), --cache-from $(cache)) \
+		$(foreach tag, $(DOCKER_BUILD_TAGS), --tag $(tag)) \
+		.
+
+# Generic target for pulling images
+.PHONY: .docker-pull-cache
+.docker-pull-cache:
+	$(info [Docker] Pulling cache)
+	@for image in $(DOCKER_BUILD_CACHE_FROM); do \
+		docker pull $$image &>/dev/null && { echo "[Docker] $$image found"; break; } || echo "[Docker] $$image not found, skipping."; \
+	done
