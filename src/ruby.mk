@@ -26,6 +26,7 @@ ${BUNDLE_PATH}: ${BUNDLE_CACHE_PATH}
 	@[ ! -z "${BUNDLE_PATH}" ] && ${MKDIRP} "${BUNDLE_PATH}"
 
 _bundle-install-required:
+	$(info [Ruby] Ensure dependencies...)
 	@bundle check
 
 # Add `bundle install` to `make install`
