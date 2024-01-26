@@ -2,18 +2,26 @@
 ## Enable Docker buildx feature
 DOCKER_BUILDKIT ?= 1
 export DOCKER_BUILDKIT
+
 ## Docker Daemon socket path
 DOCKER_SOCKET_PATH ?= /var/run/docker.sock
 export DOCKER_SOCKET_PATH
+
 ## Enable CLI hints (docker scout)
 DOCKER_CLI_HINTS ?= false
 export DOCKER_CLI_HINTS
+
 ## Docker build progress display
 DOCKER_BUILDKIT_PROGRESS ?= auto
 export DOCKER_BUILDKIT_PROGRESS
+
 ## Docker build platform (ex: linux/arm64)
 DOCKER_BUILD_PLATFORMS ?=
 export DOCKER_BUILD_PLATFORMS
+
+## Enable Docker push when building
+DOCKER_BUILD_PUSH ?=
+export DOCKER_BUILD_PUSH
 
 ifneq ($(CI_REGISTRY_IMAGE),)
 ## Docker registry to pull/push images
@@ -21,19 +29,34 @@ DOCKER_REGISTRY ?= $(CI_REGISTRY_IMAGE)/
 endif
 export DOCKER_REGISTRY
 
-## CI Docker image repository
-CONTAINER_CI_IMAGE ?= $(DOCKER_REGISTRY)dev
-## CI Docker target image
-CONTAINER_CI_TARGET ?= builder
-## CI Docker image tag
-CONTAINER_CI_TAG ?= $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_CI_TARGET)
 
-## Release Candidate Docker image repository
-CONTAINER_RC_IMAGE ?= $(CONTAINER_CI_IMAGE)
-## Release Candidate Docker target image
-CONTAINER_RC_TARGET ?= runner
-## Release Candidate Docker image tag
-CONTAINER_RC_TAG ?= $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_RC_TARGET)
+## Container builder image repository (for CI)
+CONTAINER_BUILDER_IMAGE ?= $(DOCKER_REGISTRY)dev
+## Container builder image target (for CI)
+CONTAINER_BUILDER_TARGET ?= builder
+## Container builder image tag  (for CI)
+CONTAINER_BUILDER_TAG ?=
+ifeq ($(CONTAINER_BUILDER_TAG),)
+	ifneq ($(CI),)
+		CONTAINER_BUILDER_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_BUILDER_TARGET)
+	else
+		CONTAINER_BUILDER_TAG = $(CI_COMMIT_REF_SLUG)-head--$(CONTAINER_BUILDER_TARGET)
+	endif
+endif
+
+## Container runner image repository (for server)
+CONTAINER_RUNNER_IMAGE ?= $(CONTAINER_BUILDER_IMAGE)
+## Container runner image target (for server)
+CONTAINER_RUNNER_TARGET ?= runner
+## Container runner image tag (for server)
+CONTAINER_RUNNER_TAG ?=
+ifeq ($(CONTAINER_RUNNER_TAG),)
+	ifneq ($(CI),)
+		CONTAINER_RUNNER_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_RUNNER_TARGET)
+	else
+		CONTAINER_RUNNER_TAG = $(CI_COMMIT_REF_SLUG)-head--$(CONTAINER_RUNNER_TARGET)
+	endif
+endif
 
 ## Release Docker image repository
 CONTAINER_RELEASE_IMAGE ?= $(CI_REGISTRY_IMAGE)
@@ -87,49 +110,49 @@ DOCKER_RUN_ARGS :=
 DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $(var)))
 
 .PHONY: docker-build
-docker-build: docker-image-dev docker-image-rc
+docker-build: docker-image-builder docker-image-runner
 
-.PHONY: docker-image-dev
-docker-image-dev: .docker-pull-cache
-	@${MAKE} .docker-build \
+docker-image-builder:
+	@${MAKE} .docker-pull-cache .docker-build \
 		DOCKER_BUILD_CACHE_FROM="\
-			$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET) \
-			$(CONTAINER_CI_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_CI_TARGET)" \
-		DOCKER_BUILD_TAGS="\
-			$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET) \
-			$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
-		DOCKER_BUILD_TARGET="$(CONTAINER_CI_TARGET)"
+			$(CONTAINER_BUILDER_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_BUILDER_TARGET) \
+			$(CONTAINER_BUILDER_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_BUILDER_TARGET)" \
+		DOCKER_BUILD_TAG="$(CONTAINER_BUILDER_IMAGE):$(CONTAINER_BUILDER_TAG)" \
+		DOCKER_BUILD_TAGS="$(CONTAINER_BUILDER_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_BUILDER_TARGET)" \
+		DOCKER_BUILD_TARGET="$(CONTAINER_BUILDER_TARGET)"
 
-.PHONY: docker-image-rc
-docker-image-rc: docker-image-dev
+docker-image-runner: docker-image-builder
 	@${MAKE} .docker-build \
-		DOCKER_BUILD_CACHE_FROM="$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
-		DOCKER_BUILD_TAGS="$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" \
-		DOCKER_BUILD_TARGET="$(CONTAINER_RC_TARGET)"
+		DOCKER_BUILD_CACHE_FROM="$(CONTAINER_BUILDER_IMAGE):$(CONTAINER_BUILDER_TAG)" \
+		DOCKER_BUILD_TAG="$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)" \
+		DOCKER_BUILD_TARGET="$(CONTAINER_RUNNER_TARGET)"
 
 .PHONY: docker-make-%
 docker-make-%:
 	@$(MAKE) .docker-run \
-		DOCKER_IMAGE="$(CONTAINER_CI_IMAGE)" \
-		DOCKER_TAG="$(CONTAINER_CI_TAG)" \
+		DOCKER_IMAGE="$(CONTAINER_BUILDER_IMAGE)" \
+		DOCKER_TAG="$(CONTAINER_BUILDER_TAG)" \
 		DOCKER_COMMAND="make $*"
 
 .PHONY: docker-release
 docker-release:
-  docker pull "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)"
-	docker tag "$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
+  docker pull "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)"
+	docker tag "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)" "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
   docker push "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
 
 # Generic target for building an image
 .PHONY: .docker-build
 .docker-build:
-	$(info [Docker] Building Image)
+	$(info [Docker] Building Image tag=$(DOCKER_BUILD_TAG) target=$(DOCKER_BUILD_TARGET))
 	@docker buildx build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(DOCKER_BUILD_TARGET)" \
 		$(foreach cache, $(DOCKER_BUILD_CACHE_FROM), --cache-from $(cache)) \
-		$(foreach tag, $(DOCKER_BUILD_TAGS), --tag $(tag)) \
+		$(foreach tag, $(DOCKER_BUILD_TAG) $(DOCKER_BUILD_TAGS), --tag $(tag)) \
 		.
+	@if [[ ! -z "$(DOCKER_BUILD_PUSH)" ]];then \
+		docker push --quiet "$(DOCKER_BUILD_TAG)"; \
+	fi
 
 # Generic target for pulling images
 .PHONY: .docker-pull-cache
