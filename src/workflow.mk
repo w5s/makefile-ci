@@ -1,6 +1,5 @@
 .PHONY: all
-all: prepare install lint ## Run all targets
-
+all: prepare dependencies lint ## Run all targets
 
 #-------------
 # PREPARE
@@ -8,7 +7,7 @@ all: prepare install lint ## Run all targets
 .PHONY: prepare prepare.ci prepare.default .prepare.pre .prepare .prepare.post
 prepare: .workflow-run-prepare ## Install external dependencies
 prepare.default: .prepare.pre .prepare .prepare.post
-prepare.ci: prepare.default # TODO: implement this
+# prepare.ci: prepare.default # TODO: implement this
 .prepare.pre::
 	@:
 .prepare::
@@ -22,7 +21,7 @@ prepare.ci: prepare.default # TODO: implement this
 .PHONY: dependencies dependencies.ci dependencies.default .dependencies.pre .dependencies .dependencies.post
 dependencies: .workflow-run-dependencies ## Install all dependencies
 dependencies.default: .dependencies.pre .dependencies .dependencies.post
-dependencies.ci: dependencies.default # TODO: implement this
+# dependencies.ci: dependencies.default # TODO: implement this
 .dependencies.pre::
 	@:
 .dependencies::
@@ -36,7 +35,7 @@ dependencies.ci: dependencies.default # TODO: implement this
 .PHONY: build build.ci build.default .build.pre .build .build.post
 build: .workflow-run-build ## Build sources
 build.default: .build.pre .build .build.post
-build.ci: .build.default
+# build.ci: .build.default
 .build.pre::
 	@:
 .build::
@@ -50,7 +49,7 @@ build.ci: .build.default
 .PHONY: clean clean.ci clean.default .clean.pre .clean .clean.post
 clean: .workflow-run-clean ## Clean build files
 clean.default: .clean.pre .clean .clean.post
-clean.ci: .clean.default # TODO: implement this
+# clean.ci: .clean.default # TODO: implement this
 .clean.pre::
 	@:
 .clean::
@@ -64,7 +63,7 @@ clean.ci: .clean.default # TODO: implement this
 .PHONY: lint lint.ci lint.default .lint.pre .lint .lint.post
 lint: .workflow-run-lint ## Lint all source files
 lint.default: .lint.pre .lint .lint.post
-lint.ci: lint.default # TODO: implement this
+# lint.ci: lint.default # TODO: implement this
 .lint.pre::
 	@:
 .lint::
@@ -78,7 +77,7 @@ lint.ci: lint.default # TODO: implement this
 .PHONY: format format.ci format.default .format.pre .format .format.post
 format: .workflow-run-format ## Format all source files
 format.default: .format.pre .format .format.post
-format.ci: format.default # TODO: implement this
+# format.ci: format.default # TODO: implement this
 .format.pre::
 	@:
 .format::
@@ -92,7 +91,7 @@ format.ci: format.default # TODO: implement this
 .PHONY: test test.ci test.default .test.pre .test .test.post
 test: .workflow-run-test ## Run unit tests
 test.default: .test.pre .test .test.post
-test.ci: test.default # TODO: implement this
+# test.ci: test.default # TODO: implement this
 .test.pre::
 	@:
 .test::
@@ -106,7 +105,8 @@ test.ci: test.default # TODO: implement this
 .PHONY: develop develop.ci develop.default .develop.pre .develop .develop.post
 develop: .workflow-run-develop ## Setups a local development environment
 develop.default: .develop.pre .develop .develop.post
-develop.ci: develop.default
+develop.ci:
+	@${MAKE} develop.default
 .develop.pre::
 	@:
 .develop::
