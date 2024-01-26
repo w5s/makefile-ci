@@ -110,20 +110,12 @@ docker-image-rc: \
 	export DOCKER_BUILD_TARGET = $(CONTAINER_RC_TARGET)
 docker-image-rc: .docker-build
 
-.PHONY: docker-run
-docker-run:
-	$(info [Docker] Open container...)
-	@docker run\
-		$(DOCKER_RUN_ARGS) \
-		--rm \
-		--pull missing \
-		--volume "$(shell $(PWD))":/app \
-		--volume "$(DOCKER_SOCKET_PATH)":/var/run/docker.sock \
-		"$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" /bin/bash -c "set -euo pipefail; $(DOCKER_COMMAND)"
-
 .PHONY: docker-make-%
 docker-make-%:
-	@$(MAKE) docker-run DOCKER_COMMAND="make $*"
+	@$(MAKE) .docker-run \
+		DOCKER_IMAGE="$(CONTAINER_CI_IMAGE)" \
+		DOCKER_TAG="$(CONTAINER_CI_TAG)" \
+		DOCKER_COMMAND="make $*"
 
 .PHONY: docker-release
 docker-release:
@@ -149,3 +141,15 @@ docker-release:
 	@for image in $(DOCKER_BUILD_CACHE_FROM); do \
 		docker pull $$image &>/dev/null && { echo "[Docker] $$image found"; break; } || echo "[Docker] $$image not found, skipping."; \
 	done
+
+# Generic Docker run
+.PHONY: .docker-run
+.docker-run:
+	$(info [Docker] Open container...)
+	@docker run\
+		$(DOCKER_RUN_ARGS) \
+		--rm \
+		--pull missing \
+		--volume "$(shell $(PROJECT_PATH))":/app \
+		--volume "$(DOCKER_SOCKET_PATH)":/var/run/docker.sock \
+		"$(DOCKER_IMAGE):$(DOCKER_TAG)" /bin/bash -c "set -euo pipefail; $(DOCKER_COMMAND)"
