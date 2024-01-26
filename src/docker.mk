@@ -170,6 +170,7 @@ docker-release:
 		$(DOCKER_RUN_ARGS) \
 		--rm \
 		--pull missing \
+		--quiet \
 		--volume "$(PROJECT_PATH)":/app \
 		--volume "$(DOCKER_SOCKET_PATH)":/var/run/docker.sock \
 		"$(DOCKER_IMAGE):$(DOCKER_TAG)" /bin/bash -c "set -euo pipefail; $(DOCKER_COMMAND)"
