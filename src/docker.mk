@@ -90,25 +90,22 @@ DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $
 docker-build: docker-image-dev docker-image-rc
 
 .PHONY: docker-image-dev
-docker-image-dev: \
-	export DOCKER_BUILD_CACHE_FROM = \
-		$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET) \
-		$(CONTAINER_CI_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_CI_TARGET)
-  export DOCKER_BUILD_TAGS = \
-		$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET) \
-		$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)
-  export DOCKER_BUILD_TARGET = $(CONTAINER_CI_TARGET)
-docker-image-dev: .docker-pull-cache .docker-build
+docker-image-dev: .docker-pull-cache
+	@${MAKE} .docker-build \
+		DOCKER_BUILD_CACHE_FROM="\
+			$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET) \
+			$(CONTAINER_CI_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_CI_TARGET)" \
+		DOCKER_BUILD_TAGS="\
+			$(CONTAINER_CI_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_CI_TARGET) \
+			$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
+		DOCKER_BUILD_TARGET="$(CONTAINER_CI_TARGET)"
 
 .PHONY: docker-image-rc
 docker-image-rc: docker-image-dev
-docker-image-rc: \
-	export DOCKER_BUILD_CACHE_FROM = \
-		$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)
-	export DOCKER_BUILD_TAGS = \
-		$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)
-	export DOCKER_BUILD_TARGET = $(CONTAINER_RC_TARGET)
-docker-image-rc: .docker-build
+	@${MAKE} .docker-build \
+		DOCKER_BUILD_CACHE_FROM="$(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)" \
+		DOCKER_BUILD_TAGS="$(CONTAINER_RC_IMAGE):$(CONTAINER_RC_TAG)" \
+		DOCKER_BUILD_TARGET="$(CONTAINER_RC_TARGET)"
 
 .PHONY: docker-make-%
 docker-make-%:
