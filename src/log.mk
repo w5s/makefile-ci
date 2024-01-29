@@ -19,8 +19,8 @@ log_header_fatal := !!!
 
 # Defined in makefile-core
 log_sgr0 := $(RESET)
-log_color_debug := $(BLUE)
-log_color_info := $(PURPLE)
+log_color_debug := $(PURPLE)
+log_color_info := $(BLUE)
 log_color_warn := $(YELLOW)
 log_color_error := $(RED)
 log_color_fatal := $(RED)
