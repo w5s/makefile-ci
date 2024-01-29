@@ -6,8 +6,8 @@ COMPOSE_FILE := compose-dev.yaml
 COMPOSE_MAIN_SERVICE ?= web
 
 .PHONY: docker-compose-run
-docker-compose-run: export DOCKER_BUILD_TARGET ?= $(CONTAINER_CI_TARGET)
-docker-compose-run: export APP_IMAGE = $(CONTAINER_CI_IMAGE):$(CONTAINER_CI_TAG)
+docker-compose-run: export DOCKER_BUILD_TARGET ?= $(CONTAINER_BUILDER_TARGET)
+docker-compose-run: export APP_IMAGE = $(CONTAINER_BUILDER_IMAGE):$(CONTAINER_BUILDER_TAG)
 docker-compose-run: export COMPOSE_PROJECT_NAME ?= $(CI_PROJECT_NAME)-$(shell date '+%Y%m%d%H%M%S')
 docker-compose-run:
 	@trap "echo '[Docker Compose] Stopping...';$(COMPOSE) -f $(COMPOSE_FILE) down --volumes --remove-orphans &>/dev/null" EXIT INT QUIT TERM; \
