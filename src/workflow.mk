@@ -100,6 +100,20 @@ test.default: .test.pre .test .test.post
 	@:
 
 #-------------
+# TEST SYSTEM (E2E)
+#-------------
+.PHONY: test-system test-system.ci test-system.default .test-system.pre .test .test-system.post
+test-system: .workflow-run-test-system ## Run system tests (e2e)
+test-system.default: .test-system.pre .test-system .test-system.post
+# test-system.ci: test-system.default # TODO: implement this
+.test-system.pre::
+	@:
+.test-system::
+	@:
+.test-system.post::
+	@:
+
+#-------------
 # DEVELOP
 #-------------
 .PHONY: develop develop.ci develop.default .develop.pre .develop .develop.post
