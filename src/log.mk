@@ -32,15 +32,9 @@ log_to_lower = $(shell echo $(1) | tr '[:upper:]' '[:lower:]')
 # Define the logging macros
 
 define __log_generic
-([ $$MAKE_LOG_LEVEL -gt $(2) ] || echo "$(log_bold)$(5)$(3)$(4)$(1)$(log_sgr0)")
+([ $$MAKE_LOG_LEVEL -gt $(2) ] || echo "$(log_bold)$(3)$(4) $(5)$(1)$(log_sgr0)")
 endef
 
 define log
-$(call __log_generic,\
-				$(2),\
-        $(LOG_$(call log_to_upper,$(1))),\
-        $(log_color_$(call log_to_lower,$(1))),\
-        $(log_header_$(call log_to_lower,$(1)))\
-				$(shell [ "$(or $(3),0)" = 0 ] || for i in $(shell seq 1 $(or $(3),0)); do echo -n '  '; done)\
-)
+$(call __log_generic,$(2),$(LOG_$(call log_to_upper,$(1))),$(log_color_$(call log_to_lower,$(1))),$(log_header_$(call log_to_lower,$(1))),$(shell [ "$(or $(3),0)" = 0 ] || for i in $(shell seq 1 $(or $(3),0)); do echo -n '--'; done))
 endef
