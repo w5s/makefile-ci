@@ -33,8 +33,9 @@ else
 endif
 
 _node-install-required:
+	$(call log,info,"[NodeJS] Ensure dependencies....",1)
+	$(call log,debug,"Not Implemented yet....",2)
 # TODO: implement this
-	@:
 
 
 .PHONY: prepare
@@ -46,25 +47,25 @@ _node-install-required:
 
 .PHONY: node-install
 node-install:
-	$(info [NodeJS] Install dependencies...)
+	$(call log,info,"[NodeJS] Install dependencies...",1)
 	@${NODEJS_INSTALL}
 .dependencies:: node-install	# Add `npm install` to `make install`
 
 .PHONY: node-lint
 node-lint: _node-install-required
-	$(info [NodeJS] Lint sources...)
+	$(call log,info,"[NodeJS] Lint sources...",1)
 	@npm run lint --if-present
 .lint::	node-lint # Add `npm run lint` to `make lint`
 
 .PHONY: node-format
 node-format: _node-install-required
-	$(info [NodeJS] Format sources...)
+	$(call log,info,"[NodeJS] Format sources...",1)
 	@npm run format --if-present
 .format:: node-format # Add `npm run test` to `make test`
 
 .PHONY: node-test
 node-test: _node-install-required
-	$(info [NodeJS] Test sources...)
+	$(call log,info,"[NodeJS] Test sources...",1);
 	@npm run test
 .test:: node-test # Add npm test to `make test`
 
