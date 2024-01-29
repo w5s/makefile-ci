@@ -15,7 +15,7 @@ docker-compose-run:
 	&& $(call log,info,[Docker Compose] Starting...,1) \
 	&& $(COMPOSE) -f $(COMPOSE_FILE) up --detach --remove-orphans --quiet-pull \
   && $(call log,info,[Docker Compose] Executing command...,1) \
-	&& $(COMPOSE) -f $(COMPOSE_FILE) run --use-aliases --rm $(COMPOSE_MAIN_SERVICE) $(DOCKER_COMMAND);
+	&& $(COMPOSE) -f $(COMPOSE_FILE) run --use-aliases --rm $(DOCKER_RUN_ARGS) $(COMPOSE_MAIN_SERVICE) $(DOCKER_COMMAND);
 
 
 .PHONY: docker-compose-make-%
