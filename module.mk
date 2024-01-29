@@ -27,6 +27,7 @@ endif
 
 # Include variables
 include $(SELF_DIR)src/variables.mk
+include $(SELF_DIR)src/log.mk
 include $(SELF_DIR)src/dotenv.mk
 include $(SELF_DIR)src/rescue.mk
 include $(SELF_DIR)src/cache.mk
