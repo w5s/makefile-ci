@@ -10,11 +10,11 @@ docker-compose-run: export DOCKER_BUILD_TARGET ?= $(CONTAINER_BUILDER_TARGET)
 docker-compose-run: export APP_IMAGE = $(CONTAINER_BUILDER_IMAGE):$(CONTAINER_BUILDER_TAG)
 docker-compose-run: export COMPOSE_PROJECT_NAME ?= $(CI_PROJECT_NAME)-$(shell date '+%Y%m%d%H%M%S')
 docker-compose-run:
-	@trap "echo '[Docker Compose] Stopping...';$(COMPOSE) -f $(COMPOSE_FILE) down --volumes --remove-orphans &>/dev/null" EXIT INT QUIT TERM; \
-	echo '[Docker Compose] Starting...'; \
-	$(COMPOSE) -f $(COMPOSE_FILE) up --detach --remove-orphans --quiet-pull; \
-	echo '[Docker Compose] Executing command...'; \
-	$(COMPOSE) -f $(COMPOSE_FILE) run --use-aliases --rm $(COMPOSE_MAIN_SERVICE) $(DOCKER_COMMAND)
+	@trap "echo '[Docker Compose] Stopping...';$(COMPOSE) -f $(COMPOSE_FILE) down --volumes --remove-orphans &>/dev/null" EXIT INT QUIT TERM;
+	@$(call log,info,"[Docker Compose] Starting...",1);
+	@$(COMPOSE) -f $(COMPOSE_FILE) up --detach --remove-orphans --quiet-pull;
+	@$(call log,info,"[Docker Compose] Executing command...",1);
+	@$(COMPOSE) -f $(COMPOSE_FILE) run --use-aliases --rm $(COMPOSE_MAIN_SERVICE) $(DOCKER_COMMAND)
 
 
 .PHONY: docker-compose-make-%
