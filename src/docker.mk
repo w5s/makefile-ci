@@ -143,7 +143,7 @@ docker-release:
 # Generic target for building an image
 .PHONY: .docker-build
 .docker-build:
-	$(call log,info,"[Docker] Building Image tag=$(DOCKER_BUILD_TAG) target=$(DOCKER_BUILD_TARGET)",1)
+	@$(call log,info,"[Docker] Building Image tag=$(DOCKER_BUILD_TAG) target=$(DOCKER_BUILD_TARGET)",1)
 	@docker buildx build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(DOCKER_BUILD_TARGET)" \
@@ -157,7 +157,7 @@ docker-release:
 # Generic target for pulling images
 .PHONY: .docker-pull-cache
 .docker-pull-cache:
-	$(call log,info,"[Docker] Pulling cache...",1)
+	@$(call log,info,"[Docker] Pulling cache...",1)
 	@for image in $(DOCKER_BUILD_CACHE_FROM); do \
 		docker pull $$image &>/dev/null && { echo "[Docker] $$image found"; break; } || echo "[Docker] $$image not found, skipping."; \
 	done
@@ -165,7 +165,7 @@ docker-release:
 # Generic Docker run
 .PHONY: .docker-run
 .docker-run:
-	$(call log,info,"[Docker] Open container...",1)
+	@$(call log,info,"[Docker] Open container...",1)
 	@docker run\
 		$(DOCKER_RUN_ARGS) \
 		--rm \

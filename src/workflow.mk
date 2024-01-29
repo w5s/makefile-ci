@@ -118,10 +118,10 @@ develop.ci:
 .PHONY: .workflow-run-%
 ifneq ($(CI),)
 .workflow-run-%:
-	$(call log,info,"[Make] $* \(CI\)")
+	@$(call log,info,"[Make] $* \(CI\)")
 	@${MAKE} $*.ci
 else
 .workflow-run-%:
-	$(call log,info,"[Make] $* \(Local\)")
+	@$(call log,info,"[Make] $* \(Local\)")
 	@${MAKE} $*.default
 endif

@@ -22,7 +22,7 @@ export NODEJS_VERSION
 
 # Run node install only if yarn.lock or package-lock.json has changed
 $(MAKE_CACHE_PATH)/asdf-install: $(MAKE_CACHE_PATH) .tool-versions
-	$(call log,info,"[ASDF] Install tools...",1)
+	@$(call log,info,"[ASDF] Install tools...",1)
 	@${ASDF} install
 	@${TOUCH} $@
 

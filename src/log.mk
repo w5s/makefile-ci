@@ -32,7 +32,7 @@ log_to_lower = $(shell echo $(1) | tr '[:upper:]' '[:lower:]')
 # Define the logging macros
 
 define __log_generic
-@- if [[ $$MAKE_LOG_LEVEL -le $(2) ]]; then echo "$(log_bold)$(5)$(3)$(4)$(1)$(log_sgr0)"; fi
+([ $$MAKE_LOG_LEVEL -gt $(2) ] || echo "$(log_bold)$(5)$(3)$(4)$(1)$(log_sgr0)")
 endef
 
 define log
