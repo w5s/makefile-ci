@@ -69,4 +69,10 @@ node-test: _node-install-required
 	@npm run test
 .test:: node-test # Add npm test to `make test`
 
+.PHONY: node-test-e2e
+node-test-e2e: _node-install-required
+	@$(call log,info,"[NodeJS] Test system...",1)
+	@npm run test:e2e
+.test-system:: node-test-e2e # Add rspec to `make test-system`
+
 endif
