@@ -29,6 +29,20 @@ DOCKER_REGISTRY ?= $(CI_REGISTRY_IMAGE)/
 endif
 export DOCKER_REGISTRY
 
+## Container dev envs image repository (for CI)
+CONTAINER_DEV_IMAGE ?= $(DOCKER_REGISTRY)dev
+## Container dev envs image target (for CI)
+CONTAINER_DEV_TARGET ?= dev-envs
+## Containerdev envs image tag  (for CI)
+CONTAINER_DEV_TAG ?=
+ifeq ($(CONTAINER_DEV_TAG),)
+	ifneq ($(CI),)
+		CONTAINER_DEV_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_DEV_TARGET)
+	else
+		CONTAINER_DEV_TAG = $(CI_COMMIT_REF_SLUG)-head--$(CONTAINER_DEV_TARGET)
+	endif
+endif
+
 ## Container builder image repository (for CI)
 CONTAINER_BUILDER_IMAGE ?= $(DOCKER_REGISTRY)dev
 ## Container builder image target (for CI)
@@ -110,16 +124,22 @@ DOCKER_RUN_ARGS :=
 DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $(var)))
 
 .PHONY: docker-build
-docker-build: docker-image-builder docker-image-runner
+docker-build: docker-image-dev docker-image-builder docker-image-runner
 
-docker-image-builder:
+docker-image-dev:
 	@${MAKE} .docker-pull-cache .docker-build \
-	  DOCKER_BUILD_CACHE_TO="$(CONTAINER_BUILDER_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_BUILDER_TARGET)" \
+	  DOCKER_BUILD_CACHE_TO="$(CONTAINER_DEV_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_DEV_TARGET)" \
 		DOCKER_BUILD_CACHE_FROM="\
 			$(DOCKER_BUILD_CACHE_TO) \
-			$(CONTAINER_BUILDER_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_BUILDER_TARGET)" \
-		DOCKER_BUILD_TAG="$(CONTAINER_BUILDER_IMAGE):$(CONTAINER_BUILDER_TAG)" \
+			$(CONTAINER_DEV_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_DEV_TARGET)" \
+		DOCKER_BUILD_TAG="$(CONTAINER_DEV_IMAGE):$(CONTAINER_DEV_TAG)" \
 		DOCKER_BUILD_TAGS="$(DOCKER_BUILD_CACHE_TO)" \
+		DOCKER_BUILD_TARGET="$(CONTAINER_DEV_TARGET)"
+
+docker-image-builder: docker-image-dev
+	@${MAKE} .docker-build \
+		DOCKER_BUILD_CACHE_FROM="$(CONTAINER_DEV_IMAGE):$(CONTAINER_DEV_TAG)" \
+		DOCKER_BUILD_TAG="$(CONTAINER_BUILDER_IMAGE):$(CONTAINER_BUILDER_TAG)" \
 		DOCKER_BUILD_TARGET="$(CONTAINER_BUILDER_TARGET)"
 
 docker-image-runner: docker-image-builder
@@ -155,13 +175,11 @@ docker-release:
 	@docker buildx build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(DOCKER_BUILD_TARGET)" \
+		$(shell [[ -z "$(DOCKER_BUILD_PUSH)" ]] || echo --push) \
 		$(foreach cache_to, $(DOCKER_BUILD_CACHE_TO), --cache-to type=inline,mode=max,ref=$(cache_to)) \
 		$(foreach cache_from, $(DOCKER_BUILD_CACHE_FROM), --cache-from $(cache_from)) \
 		$(foreach tag, $(DOCKER_BUILD_TAG) $(DOCKER_BUILD_TAGS), --tag $(tag)) \
 		.
-	@if [[ ! -z "$(DOCKER_BUILD_PUSH)" ]];then \
-		docker push --quiet "$(DOCKER_BUILD_TAG)" --all-tags; \
-	fi
 
 # Generic target for pulling images
 .PHONY: .docker-pull-cache
