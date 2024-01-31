@@ -29,7 +29,6 @@ DOCKER_REGISTRY ?= $(CI_REGISTRY_IMAGE)/
 endif
 export DOCKER_REGISTRY
 
-
 ## Container builder image repository (for CI)
 CONTAINER_BUILDER_IMAGE ?= $(DOCKER_REGISTRY)dev
 ## Container builder image target (for CI)
@@ -95,7 +94,8 @@ DOCKER_BUILD_ARGS_VARIABLES := \
 
 DOCKER_BUILD_ARGS := $(foreach var,$(DOCKER_BUILD_ARGS_VARIABLES),$(if $($(var)), --build-arg $(var)="$($(var))"))
 # Append inline cache
-DOCKER_BUILD_ARGS += --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-1}
+# We use cache-to=type=inline
+# DOCKER_BUILD_ARGS += --build-arg BUILDKIT_INLINE_CACHE=${BUILDKIT_INLINE_CACHE:-1}
 # Append labels
 DOCKER_BUILD_ARGS += $(foreach var,$(DOCKER_LABEL_VARIABLES),$(if $($(var)), --label $(var)="$($(var))"))
 # Append progress arguments
@@ -114,11 +114,12 @@ docker-build: docker-image-builder docker-image-runner
 
 docker-image-builder:
 	@${MAKE} .docker-pull-cache .docker-build \
+	  DOCKER_BUILD_CACHE_TO="$(CONTAINER_BUILDER_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_BUILDER_TARGET)" \
 		DOCKER_BUILD_CACHE_FROM="\
-			$(CONTAINER_BUILDER_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_BUILDER_TARGET) \
+			$(DOCKER_BUILD_CACHE_TO) \
 			$(CONTAINER_BUILDER_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_BUILDER_TARGET)" \
 		DOCKER_BUILD_TAG="$(CONTAINER_BUILDER_IMAGE):$(CONTAINER_BUILDER_TAG)" \
-		DOCKER_BUILD_TAGS="$(CONTAINER_BUILDER_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_BUILDER_TARGET)" \
+		DOCKER_BUILD_TAGS="$(DOCKER_BUILD_CACHE_TO)" \
 		DOCKER_BUILD_TARGET="$(CONTAINER_BUILDER_TARGET)"
 
 docker-image-runner: docker-image-builder
@@ -134,6 +135,13 @@ docker-make-%:
 		DOCKER_TAG="$(CONTAINER_BUILDER_TAG)" \
 		DOCKER_COMMAND="make $*"
 
+.PHONY: docker-run
+docker-run:
+	@$(MAKE) .docker-run \
+		DOCKER_IMAGE="$(CONTAINER_BUILDER_IMAGE)" \
+		DOCKER_TAG="$(CONTAINER_BUILDER_TAG)" \
+		DOCKER_COMMAND="$(DOCKER_COMMAND)"
+
 .PHONY: docker-release
 docker-release:
   docker pull "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)"
@@ -147,11 +155,12 @@ docker-release:
 	@docker buildx build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(DOCKER_BUILD_TARGET)" \
-		$(foreach cache, $(DOCKER_BUILD_CACHE_FROM), --cache-from $(cache)) \
+		$(foreach cache_to, $(DOCKER_BUILD_CACHE_TO), --cache-to type=inline,mode=max,ref=$(cache_to)) \
+		$(foreach cache_from, $(DOCKER_BUILD_CACHE_FROM), --cache-from $(cache_from)) \
 		$(foreach tag, $(DOCKER_BUILD_TAG) $(DOCKER_BUILD_TAGS), --tag $(tag)) \
 		.
 	@if [[ ! -z "$(DOCKER_BUILD_PUSH)" ]];then \
-		docker push --quiet "$(DOCKER_BUILD_TAG)"; \
+		docker push --quiet "$(DOCKER_BUILD_TAG)" --all-tags; \
 	fi
 
 # Generic target for pulling images
