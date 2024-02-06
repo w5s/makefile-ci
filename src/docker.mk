@@ -81,7 +81,7 @@ DOCKER_LABEL_VARIABLES := \
 	CI_COMMIT_REF_NAME \
 	CI_COMMIT_REF_SLUG \
 	CI_COMMIT_SHA \
-  CI_COMMIT_SHORT_SHA \
+	CI_COMMIT_SHORT_SHA \
 	CI_COMMIT_TIMESTAMP \
 	CI_JOB_ID \
 	CI_JOB_URL \
@@ -128,7 +128,7 @@ docker-build: docker-image-dev docker-image-builder docker-image-runner
 
 docker-image-dev:
 	@${MAKE} .docker-pull-cache .docker-build \
-	  DOCKER_BUILD_CACHE_TO="$(CONTAINER_DEV_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_DEV_TARGET)" \
+		DOCKER_BUILD_CACHE_TO="$(CONTAINER_DEV_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_DEV_TARGET)" \
 		DOCKER_BUILD_CACHE_FROM="\
 			$(CONTAINER_DEV_IMAGE):$(CI_COMMIT_REF_SLUG)-cache--$(CONTAINER_DEV_TARGET) \
 			$(CONTAINER_DEV_IMAGE):$(CI_DEFAULT_BRANCH)-cache--$(CONTAINER_DEV_TARGET)" \
@@ -172,9 +172,9 @@ docker-run:
 
 .PHONY: docker-release
 docker-release:
-  docker pull "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)"
+	docker pull "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)"
 	docker tag "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)" "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
-  docker push "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
+	docker push "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
 
 # Generic target for building an image
 .PHONY: .docker-build
