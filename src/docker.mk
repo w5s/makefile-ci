@@ -39,7 +39,7 @@ ifeq ($(CONTAINER_DEV_TAG),)
 	ifneq ($(CI),)
 		CONTAINER_DEV_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_DEV_TARGET)
 	else
-		CONTAINER_DEV_TAG = $(CI_COMMIT_REF_SLUG)-head--$(CONTAINER_DEV_TARGET)
+		CONTAINER_DEV_TAG = local--$(CONTAINER_DEV_TARGET)
 	endif
 endif
 
@@ -53,7 +53,7 @@ ifeq ($(CONTAINER_BUILDER_TAG),)
 	ifneq ($(CI),)
 		CONTAINER_BUILDER_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_BUILDER_TARGET)
 	else
-		CONTAINER_BUILDER_TAG = $(CI_COMMIT_REF_SLUG)-head--$(CONTAINER_BUILDER_TARGET)
+		CONTAINER_BUILDER_TAG = local--$(CONTAINER_BUILDER_TARGET)
 	endif
 endif
 
@@ -67,7 +67,7 @@ ifeq ($(CONTAINER_RUNNER_TAG),)
 	ifneq ($(CI),)
 		CONTAINER_RUNNER_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_RUNNER_TARGET)
 	else
-		CONTAINER_RUNNER_TAG = $(CI_COMMIT_REF_SLUG)-head--$(CONTAINER_RUNNER_TARGET)
+		CONTAINER_RUNNER_TAG = local--$(CONTAINER_RUNNER_TARGET)
 	endif
 endif
 
@@ -158,9 +158,7 @@ docker-image-runner: docker-image-builder
 
 .PHONY: docker-make-%
 docker-make-%:
-	@$(MAKE) .docker-run \
-		DOCKER_IMAGE="$(CONTAINER_BUILDER_IMAGE)" \
-		DOCKER_TAG="$(CONTAINER_BUILDER_TAG)" \
+	@$(MAKE) docker-run \
 		DOCKER_COMMAND="make $*"
 
 .PHONY: docker-run
@@ -206,6 +204,5 @@ docker-release:
 		--rm \
 		--pull missing \
 		--quiet \
-		--volume "$(PROJECT_PATH)":/app \
 		--volume "$(DOCKER_SOCKET_PATH)":/var/run/docker.sock \
 		"$(DOCKER_IMAGE):$(DOCKER_TAG)" /bin/bash -c "set -euo pipefail; $(DOCKER_COMMAND)"
