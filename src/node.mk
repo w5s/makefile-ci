@@ -37,17 +37,16 @@ _node-install-required:
 	@$(call log,debug,"Not Implemented yet....",2)
 # TODO: implement this
 
-
 .PHONY: node-prepare
 node-prepare:
 ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
 	@$(call log,info,"[NodeJS] Install package manager...",1)
 	@corepack enable
 endif
-.prepare::node-prepare # Add to `make prepare`
+.prepare:: node-prepare # Add to `make prepare`
 
 .PHONY: node-install
-node-install: node-prepare
+node-install:
 	@$(call log,info,"[NodeJS] Install dependencies...",1)
 	@${NODEJS_INSTALL}
 .dependencies:: node-install	# Add `npm install` to `make install`
