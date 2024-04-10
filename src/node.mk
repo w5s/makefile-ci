@@ -38,15 +38,16 @@ _node-install-required:
 # TODO: implement this
 
 
-.PHONY: prepare
-.prepare::
-	@if ! command yarn --version &>/dev/null; then \
-		echo "Installing yarn..."; \
-		npm install -g yarn; \
-	fi
+.PHONY: node-prepare
+node-prepare:
+ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
+	@$(call log,info,"[NodeJS] Install package manager...",1)
+	@corepack enable
+endif
+.prepare::node-prepare # Add to `make prepare`
 
 .PHONY: node-install
-node-install:
+node-install: node-prepare
 	@$(call log,info,"[NodeJS] Install dependencies...",1)
 	@${NODEJS_INSTALL}
 .dependencies:: node-install	# Add `npm install` to `make install`
