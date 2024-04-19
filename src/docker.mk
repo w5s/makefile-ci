@@ -24,13 +24,11 @@ DOCKER_BUILD_PUSH ?=
 export DOCKER_BUILD_PUSH
 
 ifneq ($(CI_REGISTRY_IMAGE),)
-## Docker registry to pull/push images
-DOCKER_REGISTRY ?= $(CI_REGISTRY_IMAGE)/
+CI_REGISTRY_IMAGE_PREFIX := $(CI_REGISTRY_IMAGE)/
 endif
-export DOCKER_REGISTRY
 
 ## Container dev envs image repository (for CI)
-CONTAINER_DEV_IMAGE ?= $(DOCKER_REGISTRY)dev
+CONTAINER_DEV_IMAGE ?= $(CI_REGISTRY_IMAGE_PREFIX)dev
 ## Container dev envs image target (for CI)
 CONTAINER_DEV_TARGET ?= dev-envs
 ## Containerdev envs image tag  (for CI)
@@ -44,7 +42,7 @@ ifeq ($(CONTAINER_DEV_TAG),)
 endif
 
 ## Container builder image repository (for CI)
-CONTAINER_BUILDER_IMAGE ?= $(DOCKER_REGISTRY)dev
+CONTAINER_BUILDER_IMAGE ?= $(CI_REGISTRY_IMAGE_PREFIX)dev
 ## Container builder image target (for CI)
 CONTAINER_BUILDER_TARGET ?= builder
 ## Container builder image tag  (for CI)
@@ -123,6 +121,13 @@ DOCKER_RUN_ARGS :=
 # Append env
 DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $(var)))
 
+.PHONY: docker-login
+docker-login:
+	@${MAKE} .docker-login \
+		DOCKER_REGISTRY=$(CI_REGISTRY) \
+		DOCKER_USERNAME=$(CI_REGISTRY_USER) \
+		DOCKER_PASSWORD=$(CI_REGISTRY_PASSWORD)
+
 .PHONY: docker-build
 docker-build: docker-image-dev docker-image-builder docker-image-runner
 
@@ -186,6 +191,16 @@ docker-release:
 		$(foreach cache_from, $(DOCKER_BUILD_CACHE_FROM), --cache-from $(cache_from)) \
 		$(foreach tag, $(DOCKER_BUILD_TAG) $(DOCKER_BUILD_TAGS), --tag $(tag)) \
 		.
+
+# Generic target to log in docker registry
+.PHONY: .docker-login
+.docker-login:
+	@if [[ -z "$(DOCKER_REGISTRY)" || -z "$(DOCKER_USERNAME)" ]];then \
+		$(call log,warn,"[Docker] Login skipped \(registry=$(DOCKER_REGISTRY), username=$(DOCKER_USERNAME), password=$(call mask-password,$(DOCKER_PASSWORD))\) \(Reason: Empty Credential\)",1) \
+	else \
+		$(call log,info,"[Docker] Login \(registry=$(DOCKER_REGISTRY), username=$(DOCKER_USERNAME), password=$(call mask-password,$(DOCKER_PASSWORD))\)...",1); \
+		echo "$(DOCKER_PASSWORD)" | docker login "$(DOCKER_REGISTRY)" --username "$(DOCKER_USERNAME)" --password-stdin; \
+	fi;
 
 # Generic target for pulling images
 .PHONY: .docker-pull-cache
