@@ -124,9 +124,9 @@ DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $
 .PHONY: docker-login
 docker-login:
 	@${MAKE} .docker-login \
-		DOCKER_REGISTRY=$(CI_REGISTRY) \
-		DOCKER_USERNAME=$(CI_REGISTRY_USER) \
-		DOCKER_PASSWORD=$(CI_REGISTRY_PASSWORD)
+		DOCKER_REGISTRY="$(CI_REGISTRY)" \
+		DOCKER_USERNAME="$(CI_REGISTRY_USER)" \
+		DOCKER_PASSWORD="$(CI_REGISTRY_PASSWORD)"
 
 .PHONY: docker-build
 docker-build: docker-image-dev docker-image-builder docker-image-runner
@@ -199,7 +199,7 @@ docker-release:
 		$(call log,warn,"[Docker] Login skipped \(registry=$(DOCKER_REGISTRY), username=$(DOCKER_USERNAME), password=$(call mask-password,$(DOCKER_PASSWORD))\) \(Reason: Empty Credential\)",1) \
 	else \
 		$(call log,info,"[Docker] Login \(registry=$(DOCKER_REGISTRY), username=$(DOCKER_USERNAME), password=$(call mask-password,$(DOCKER_PASSWORD))\)...",1); \
-		echo "$(DOCKER_PASSWORD)" | docker login "$(DOCKER_REGISTRY)" --username "$(DOCKER_USERNAME)" --password-stdin; \
+		echo "$(DOCKER_PASSWORD)" | docker login --username "$(DOCKER_USERNAME)" --password-stdin "$(DOCKER_REGISTRY)"; \
 	fi;
 
 # Generic target for pulling images
