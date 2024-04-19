@@ -21,6 +21,12 @@ export DOCKER_BUILD_PLATFORMS
 
 ## Enable Docker push when building
 DOCKER_BUILD_PUSH ?=
+ifeq ($(DOCKER_BUILD_PUSH),)
+	ifneq ($(CI),)
+# Enable DOCKER_BUILD_PUSH by default when CI is set
+		DOCKER_BUILD_PUSH = 1
+	endif
+endif
 export DOCKER_BUILD_PUSH
 
 ifneq ($(CI_REGISTRY_IMAGE),)
