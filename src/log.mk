@@ -38,3 +38,8 @@ endef
 define log
 $(call __log_generic,$(2),$(LOG_$(call log_to_upper,$(1))),$(log_color_$(call log_to_lower,$(1))),$(log_header_$(call log_to_lower,$(1))),$(shell [ "$(or $(3),0)" = 0 ] || for i in $(shell seq 1 $(or $(3),0)); do echo -n '--'; done))
 endef
+
+# A function that will display a password with **** + last 4 characters
+define mask-password
+$(shell [ -z "$(1)" ] && (echo '') || (echo "****$(shell printf "$(1)" | tail -c 4)"))
+endef
