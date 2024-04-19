@@ -160,6 +160,9 @@ CI_REGISTRY_IMAGE_DEFAULT := $(CI_REGISTRY)/$(CI_PROJECT_PATH)
 else
 CI_REGISTRY_IMAGE_DEFAULT := $(CI_PROJECT_PATH)
 endif
+# lower case by default
+CI_REGISTRY_IMAGE_DEFAULT := $(shell echo $(CI_REGISTRY)/$(CI_PROJECT_PATH) | tr '[:upper:]' '[:lower:]')
+
 ## The address of the project’s Container Registry
 CI_REGISTRY_IMAGE ?= $(CI_REGISTRY_IMAGE_DEFAULT)
 export CI_REGISTRY_IMAGE
