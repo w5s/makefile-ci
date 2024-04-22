@@ -78,7 +78,7 @@ endif
 ## Release Docker image repository
 CONTAINER_RELEASE_IMAGE ?= $(CI_REGISTRY_IMAGE)
 ## Release Docker image tag
-CONTAINER_RELEASE_TAG ?= 1.$(shell echo "$(CI_PIPELINE_CREATED_AT)" | cut -c 1-19 | sed 's/[:-]//g;s/T/./g')-sha.$(CI_COMMIT_SHORT_SHA)
+CONTAINER_RELEASE_TAG ?= 1.$(shell echo "$(CI_COMMIT_TIMESTAMP)" | cut -c 1-19 | sed 's/[:-]//g;s/T/./g')-sha.$(CI_COMMIT_SHORT_SHA)
 
 DOCKER_LABEL_VARIABLES := \
 	CI_COMMIT_AUTHOR \
