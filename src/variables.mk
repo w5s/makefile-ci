@@ -12,6 +12,9 @@ endif
 ifeq ($(BUNDLE),)
 	BUNDLE = bundle
 endif
+ifeq ($(DATE),)
+	DATE := date
+endif
 
 ## Project root path
 PROJECT_PATH ?= $(CURDIR)
@@ -76,7 +79,7 @@ export CI_COMMIT_SHORT_SHA
 CI_VARIABLES += CI_COMMIT_SHORT_SHA
 
 ## The timestamp of the commit in the ISO 8601 format.
-CI_COMMIT_TIMESTAMP ?= $(shell git log -1 --format=%ct)
+CI_COMMIT_TIMESTAMP ?= $(shell ${DATE} -d "@$(shell ${GIT} show -s --format=%ct)" --utc +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null)
 export CI_COMMIT_TIMESTAMP
 CI_VARIABLES += CI_COMMIT_TIMESTAMP
 
