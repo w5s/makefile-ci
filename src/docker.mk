@@ -128,14 +128,14 @@ DOCKER_RUN_ARGS :=
 DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $(var)))
 
 .PHONY: docker-login
-docker-login:
+docker-login: ## Login to $CI_REGISTRY (username=$CI_REGISTRY_USER, password=$CI_REGISTRY_PASSWORD)
 	@${MAKE} .docker-login \
 		DOCKER_REGISTRY="$(CI_REGISTRY)" \
 		DOCKER_USERNAME="$(CI_REGISTRY_USER)" \
 		DOCKER_PASSWORD="$(CI_REGISTRY_PASSWORD)"
 
 .PHONY: docker-build
-docker-build: docker-image-dev docker-image-builder docker-image-runner
+docker-build: docker-image-dev docker-image-builder docker-image-runner ## Build docker image (and push cache tags)
 
 docker-image-dev:
 	@${MAKE} .docker-pull-cache .docker-build \
@@ -180,7 +180,7 @@ docker-run:
 		DOCKER_COMMAND="$(DOCKER_COMMAND)"
 
 .PHONY: docker-release
-docker-release:
+docker-release: ## Tag and push Docker Release image ($CONTAINER_RELEASE_IMAGE:$CONTAINER_RELEASE_TAG)
 	docker pull "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)"
 	docker tag "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)" "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
 	docker push "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
