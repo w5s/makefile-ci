@@ -6,9 +6,9 @@ DOTENV_VAULT_FILE := .env.vault
 DOTENV_KEY ?=
 
 # Load $(PROJECT_PATH)/.env if exists
-ifneq (,$(wildcard $(PROJECT_PATH)/$(DOTENV_FILE)))
-include $(PROJECT_PATH)/$(DOTENV_FILE)
-export
-endif
+# ifneq (,$(wildcard $(PROJECT_PATH)/$(DOTENV_FILE)))
+# include $(PROJECT_PATH)/$(DOTENV_FILE)
+# export
+# endif
 
 endif
