@@ -1,3 +1,12 @@
+# Return a newline character
+#
+# @example
+#   $(newline)
+define newline
+
+
+endef
+
 # Display a password with **** + last 4 characters
 #
 # @example
