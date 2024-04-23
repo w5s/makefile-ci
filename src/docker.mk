@@ -131,8 +131,8 @@ DOCKER_RUN_ARGS += $(foreach var,$(DOCKER_ENV_VARIABLES),$(if $($(var)), --env $
 docker-login: ## Login to $CI_REGISTRY (username=$CI_REGISTRY_USER, password=$CI_REGISTRY_PASSWORD)
 	@${MAKE} .docker-login \
 		DOCKER_REGISTRY="$(CI_REGISTRY)" \
-		DOCKER_USERNAME="$(CI_REGISTRY_USER)" \
-		DOCKER_PASSWORD="$(CI_REGISTRY_PASSWORD)"
+		DOCKER_USERNAME='$(call escape-shell,$(CI_REGISTRY_USER))' \
+		DOCKER_PASSWORD='$(call escape-shell,$(CI_REGISTRY_PASSWORD))'
 
 .PHONY: docker-build
 docker-build: docker-image-dev docker-image-builder docker-image-runner ## Build docker image (and push cache tags)
@@ -205,7 +205,7 @@ docker-release: ## Tag and push Docker Release image ($CONTAINER_RELEASE_IMAGE:$
 		$(call log,warn,"[Docker] Login skipped \(registry=$(DOCKER_REGISTRY), username=$(DOCKER_USERNAME), password=$(call mask-password,$(DOCKER_PASSWORD))\) \(Reason: Empty Credential\)",1) \
 	else \
 		$(call log,info,"[Docker] Login \(registry=$(DOCKER_REGISTRY), username=$(DOCKER_USERNAME), password=$(call mask-password,$(DOCKER_PASSWORD))\)...",1); \
-		echo "$(DOCKER_PASSWORD)" | docker login --username "$(DOCKER_USERNAME)" --password-stdin "$(DOCKER_REGISTRY)"; \
+		echo '$(call escape-shell,$(DOCKER_PASSWORD))' | docker login --username '$(call escape-shell,$(DOCKER_USERNAME))' --password-stdin '$(call escape-shell,$(DOCKER_REGISTRY))'; \
 	fi;
 
 # Generic target for pulling images
