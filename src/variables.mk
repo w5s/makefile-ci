@@ -226,7 +226,14 @@ export GIT_COMMITTER_EMAIL
 # Build
 
 ## Type of build (release|debug)
-BUILD_TYPE ?= release
+BUILD_TYPE ?=
+ifeq ($(BUILD_TYPE),)
+	ifneq ($(CI),)
+		BUILD_TYPE = debug
+	else
+		BUILD_TYPE = release
+	endif
+endif
 export BUILD_TYPE
 
 # Debug
