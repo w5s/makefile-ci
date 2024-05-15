@@ -109,7 +109,7 @@ export CI_JOB_STARTED_AT
 CI_VARIABLES += CI_JOB_STARTED_AT
 
 ## The name of the environment for this job
-CI_ENVIRONMENT_NAME ?= local
+CI_ENVIRONMENT_NAME ?= development
 export CI_ENVIRONMENT_NAME
 CI_VARIABLES += CI_ENVIRONMENT_NAME
 
