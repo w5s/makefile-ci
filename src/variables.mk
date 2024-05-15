@@ -223,6 +223,12 @@ export GIT_COMMITTER_NAME
 GIT_COMMITTER_EMAIL ?=
 export GIT_COMMITTER_EMAIL
 
+# Build
+
+## Type of build (release|debug)
+BUILD_TYPE ?= release
+export BUILD_TYPE
+
 # Debug
 ##
 # DEBUG_BIND ?= 127.0.0.1
