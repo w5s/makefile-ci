@@ -192,6 +192,19 @@ CI_APPLICATION_TAG ?= $(or $(CI_COMMIT_TAG), $(CI_COMMIT_SHA))
 export CI_APPLICATION_TAG
 CI_VARIABLES += CI_APPLICATION_TAG
 
+# CUSTOM variable : build type
+## Type of build (release|debug)
+CI_BUILD_TYPE ?=
+ifeq ($(CI_BUILD_TYPE),)
+	ifneq ($(CI),)
+		CI_BUILD_TYPE = debug
+	else
+		CI_BUILD_TYPE = release
+	endif
+endif
+export CI_BUILD_TYPE
+CI_VARIABLES += CI_BUILD_TYPE
+
 # Git variables
 
 ## Current git branch
@@ -223,18 +236,7 @@ export GIT_COMMITTER_NAME
 GIT_COMMITTER_EMAIL ?=
 export GIT_COMMITTER_EMAIL
 
-# Build
 
-## Type of build (release|debug)
-BUILD_TYPE ?=
-ifeq ($(BUILD_TYPE),)
-	ifneq ($(CI),)
-		BUILD_TYPE = debug
-	else
-		BUILD_TYPE = release
-	endif
-endif
-export BUILD_TYPE
 
 # Debug
 ##

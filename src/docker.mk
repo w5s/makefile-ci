@@ -109,7 +109,7 @@ DOCKER_ENV_VARIABLES := $(CI_VARIABLES) \
 # DOCKER_BUILD_ARGS
 DOCKER_BUILD_ARGS_VARIABLES := \
 	$(ASDF_VARIABLES) \
-	BUILD_TYPE
+	CI_BUILD_TYPE
 
 DOCKER_BUILD_ARGS := $(foreach var,$(DOCKER_BUILD_ARGS_VARIABLES),$(if $($(var)), --build-arg $(var)="$($(var))"))
 # Append inline cache
