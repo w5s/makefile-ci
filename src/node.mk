@@ -41,38 +41,38 @@ _node-install-required:
 node-prepare:
 ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
 	@$(call log,info,"[NodeJS] Install package manager...",1)
-	@corepack enable
+	$(Q)corepack enable
 endif
 .prepare:: node-prepare # Add to `make prepare`
 
 .PHONY: node-install
 node-install:
 	@$(call log,info,"[NodeJS] Install dependencies...",1)
-	@${NODEJS_INSTALL}
+	$(Q)${NODEJS_INSTALL}
 .dependencies:: node-install	# Add `npm install` to `make install`
 
 .PHONY: node-lint
 node-lint: _node-install-required
 	@$(call log,info,"[NodeJS] Lint sources...",1)
-	@npm run lint --if-present
+	$(Q)npm run lint --if-present
 .lint::	node-lint # Add `npm run lint` to `make lint`
 
 .PHONY: node-format
 node-format: _node-install-required
 	@$(call log,info,"[NodeJS] Format sources...",1)
-	@npm run format --if-present
+	$(Q)npm run format --if-present
 .format:: node-format # Add `npm run test` to `make test`
 
 .PHONY: node-test
 node-test: _node-install-required
 	@$(call log,info,"[NodeJS] Test sources...",1);
-	@npm run test
+	$(Q)npm run test
 .test:: node-test # Add npm test to `make test`
 
 .PHONY: node-test-e2e
 node-test-e2e: _node-install-required
 	@$(call log,info,"[NodeJS] Test system...",1)
-	@npm run test:e2e
+	$(Q)npm run test:e2e
 .test-system:: node-test-e2e # Add rspec to `make test-system`
 
 endif
