@@ -10,19 +10,19 @@ ifneq ($(DEVCONTAINER_ENABLED),)
 DEVCONTAINER_FLAGS ?= --workspace-folder .
 
 devcontainers-cli:
-	@if ! command devcontainer --version &>/dev/null; then \
+	$(Q)if ! command devcontainer --version &>/dev/null; then \
 		echo "Installing Dev Containers CLI..."; \
 		npm install -g @devcontainers/cli; \
 	fi
 
 devcontainer-build: devcontainers-cli
-	@${DEVCONTAINER} build $(DEVCONTAINER_FLAGS)
+	$(Q)${DEVCONTAINER} build $(DEVCONTAINER_FLAGS)
 
 devcontainer-up: devcontainers-cli
-	@${DEVCONTAINER} up $(DEVCONTAINER_FLAGS)
+	$(Q)${DEVCONTAINER} up $(DEVCONTAINER_FLAGS)
 
 devcontainer-start: devcontainer-up
-	@${DEVCONTAINER} exec $(DEVCONTAINER_FLAGS) /bin/zsh
+	$(Q)${DEVCONTAINER} exec $(DEVCONTAINER_FLAGS) /bin/zsh
 
 # Add `@devcontainers/cli` to `make prepare`
 .PHONY: .prepare
