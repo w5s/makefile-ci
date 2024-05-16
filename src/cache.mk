@@ -11,7 +11,7 @@ $(MAKE_CACHE_PATH):
 .PHONY: .cache-clean
 .cache-clean:
 	@$(call log,info,"[Make] Clean cache...",1)
-	@$(RM) -rf $(MAKE_CACHE_PATH)
+	$(Q)$(RM) -rf $(MAKE_CACHE_PATH)
 
 # Add clear cache to `make clean` target
 .clean:: .cache-clean
