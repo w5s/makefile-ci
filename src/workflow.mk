@@ -4,9 +4,10 @@ all: prepare dependencies lint ## Run all targets
 #-------------
 # PREPARE
 #-------------
-.PHONY: prepare prepare.ci prepare.default .prepare.pre .prepare .prepare.post
+.PHONY: prepare prepare.default prepare.local prepare.ci .prepare.pre .prepare .prepare.post
 prepare: .workflow-run-prepare ## Install external dependencies
 prepare.default: .prepare.pre .prepare .prepare.post
+prepare.local: prepare.default
 # prepare.ci: prepare.default # TODO: implement this
 .prepare.pre::
 	@:
@@ -18,10 +19,11 @@ prepare.default: .prepare.pre .prepare .prepare.post
 #-------------
 # DEPENDENCIES
 #-------------
-.PHONY: dependencies dependencies.ci dependencies.default .dependencies.pre .dependencies .dependencies.post
+.PHONY: dependencies dependencies.default dependencies.local dependencies.ci .dependencies.pre .dependencies .dependencies.post
 dependencies: .workflow-run-dependencies ## Install all dependencies
 dependencies.default: .dependencies.pre .dependencies .dependencies.post
-# dependencies.ci: dependencies.default # TODO: implement this
+dependencies.local: dependencies.default
+dependencies.ci: dependencies.default
 .dependencies.pre::
 	@:
 .dependencies::
@@ -32,10 +34,11 @@ dependencies.default: .dependencies.pre .dependencies .dependencies.post
 #-------------
 # BUILD
 #-------------
-.PHONY: build build.ci build.default .build.pre .build .build.post
+.PHONY: build build.default build.local build.ci .build.pre .build .build.post
 build: .workflow-run-build ## Build sources
 build.default: .build.pre .build .build.post
-# build.ci: .build.default
+build.local: build.default
+# build.ci: build.default # TODO: implement this
 .build.pre::
 	@:
 .build::
@@ -46,10 +49,11 @@ build.default: .build.pre .build .build.post
 #-------------
 # CLEAN
 #-------------
-.PHONY: clean clean.ci clean.default .clean.pre .clean .clean.post
+.PHONY: clean clean.default clean.local clean.ci .clean.pre .clean .clean.post
 clean: .workflow-run-clean ## Clean build files
 clean.default: .clean.pre .clean .clean.post
-# clean.ci: .clean.default # TODO: implement this
+clean.local: clean.default
+clean.ci: clean.default
 .clean.pre::
 	@:
 .clean::
@@ -60,10 +64,11 @@ clean.default: .clean.pre .clean .clean.post
 #-------------
 # LINT
 #-------------
-.PHONY: lint lint.ci lint.default .lint.pre .lint .lint.post
+.PHONY: lint lint.default lint.local lint.ci .lint.pre .lint .lint.post
 lint: .workflow-run-lint ## Lint all source files
 lint.default: .lint.pre .lint .lint.post
-# lint.ci: lint.default # TODO: implement this
+lint.local: lint.default
+lint.ci: lint.default
 .lint.pre::
 	@:
 .lint::
@@ -74,10 +79,11 @@ lint.default: .lint.pre .lint .lint.post
 #-------------
 # FORMAT
 #-------------
-.PHONY: format format.ci format.default .format.pre .format .format.post
+.PHONY: format format.default format.local format.ci .format.pre .format .format.post
 format: .workflow-run-format ## Format all source files
 format.default: .format.pre .format .format.post
-# format.ci: format.default # TODO: implement this
+format.local: format.default
+format.ci: format.default
 .format.pre::
 	@:
 .format::
@@ -88,10 +94,11 @@ format.default: .format.pre .format .format.post
 #-------------
 # TEST
 #-------------
-.PHONY: test test.ci test.default .test.pre .test .test.post
+.PHONY: test test.default test.local test.ci .test.pre .test .test.post
 test: .workflow-run-test ## Run unit tests
 test.default: .test.pre .test .test.post
-# test.ci: test.default # TODO: implement this
+test.local: test.default
+test.ci: test.default
 .test.pre::
 	@:
 .test::
@@ -102,10 +109,10 @@ test.default: .test.pre .test .test.post
 #-------------
 # TEST SYSTEM (E2E)
 #-------------
-.PHONY: test-system test-system.ci test-system.default .test-system.pre .test .test-system.post
+.PHONY: test-system test-system.default test-system.local test-system.ci .test-system.pre .test .test-system.post
 test-system: .workflow-run-test-system ## Run system tests (e2e)
-test-system.default: .test-system.pre .test-system .test-system.post
-# test-system.ci: test-system.default # TODO: implement this
+test-system.local: .test-system.pre .test-system .test-system.post
+test-system.ci: test-system.default
 .test-system.pre::
 	@:
 .test-system::
@@ -116,16 +123,35 @@ test-system.default: .test-system.pre .test-system .test-system.post
 #-------------
 # DEVELOP
 #-------------
-.PHONY: develop develop.ci develop.default .develop.pre .develop .develop.post
+.PHONY: develop develop.default develop.local develop.ci .develop.pre .develop .develop.post
 develop: .workflow-run-develop ## Setups a local development environment
-develop.default: .develop.pre .develop .develop.post
-develop.ci:
-	@${MAKE} develop.default
+develop.local: .develop.pre .develop .develop.post
+# develop.ci: develop.default Disabled because make no sense...
 .develop.pre::
 	@:
 .develop::
 	@:
 .develop.post::
+	@:
+
+#-------------
+# DEPLOY
+#-------------
+.PHONY: deploy deploy.default deploy.local deploy.ci .deploy.pre .deploy .deploy.post
+deploy: .workflow-run-deploy ## Deploy the application to the given environment
+deploy.default: .deploy.pre .deploy .deploy.post
+deploy.local:
+	$(Q)echo "WARNING! This will deploy local files"
+	$(Q)read -r -p "Continue? [y/N]" REPLY;echo; \
+	if [[ "$$REPLY" =~ ^[Yy]$$ ]]; then \
+		$(MAKE) deploy.default; \
+	fi
+deploy.ci: deploy.default
+.deploy.pre::
+	@:
+.deploy::
+	@:
+.deploy.post::
 	@:
 
 # This job will run
@@ -137,5 +163,5 @@ ifneq ($(CI),)
 else
 .workflow-run-%:
 	@$(call log,info,"[Make] $* \(Local\)")
-	@${MAKE} $*.default
+	@${MAKE} $*.local
 endif
