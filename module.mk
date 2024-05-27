@@ -56,5 +56,7 @@ ifneq ($(RUBY_ENABLED),)
 include $(SELF_DIR)src/ruby.mk
 endif
 
+include $(SELF_DIR)src/scalingo.mk
+
 include $(SELF_DIR)src/workflow.mk
 
