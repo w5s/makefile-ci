@@ -186,6 +186,12 @@ docker-release: ## Tag and push Docker Release image ($CONTAINER_RELEASE_IMAGE:$
 	docker tag "$(CONTAINER_RUNNER_IMAGE):$(CONTAINER_RUNNER_TAG)" "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
 	docker push "$(CONTAINER_RELEASE_IMAGE):$(CONTAINER_RELEASE_TAG)"
 
+.PHONY: docker-rescue
+docker-rescue:
+	@$(call log,info,"[Docker] Clean all unused docker images...",1)
+	$(Q)docker image prune -a
+.rescue:: docker-rescue
+
 # Generic target for building an image
 .PHONY: .docker-build
 .docker-build:
