@@ -160,7 +160,7 @@ deploy.ci: deploy.default
 .PHONY: rescue rescue.default rescue.local rescue.ci .rescue.pre .rescue .rescue.post
 rescue: .workflow-run-rescue ## Clean everything in case of problem
 rescue.default: .rescue.pre .rescue .rescue.post
-rescue.local:
+rescue.local: rescue.default
 # rescue.ci: rescue.default Disabled because make no sense...
 .rescue.pre::
 	@:
