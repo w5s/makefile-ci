@@ -2,19 +2,29 @@ ifneq ($(wildcard .rubocop.yml),)
 	RUBOCOP_ENABLED := true
 endif
 
+ifneq ($(wildcard .rubycritic.yml),)
+	RUBYCRITIC_ENABLED := true
+endif
+
 ifneq ($(RUBY_ENABLED),)
 
 # BUNDLE_PATH ?= ${PROJECT_VENDOR_PATH}/bundle
-## Bundle `install` will exit with error if Gemfile.lock is not up to date
-BUNDLE_FROZEN ?=
-ifeq ($(CI),)
-	BUNDLE_FROZEN ?= true
-else
-	BUNDLE_FORCE_RUBY_PLATFORM ?= true
-endif
 BUNDLE_INSTALL := ${BUNDLE} install
 RUBOCOP := ${BUNDLE} exec rubocop
+RUBYCRITIC := ${BUNDLE} exec rubycritic
+# RUBYCRITIC_FLAGS :=
 RAKE := ${BUNDLE} exec rake
+
+## Bundle `install` will exit with error if Gemfile.lock is not up to date
+BUNDLE_FROZEN ?=
+## Bundle `install` will force platform
+BUNDLE_FORCE_RUBY_PLATFORM ?=
+ifeq ($(CI),)
+# do nothing
+else
+	BUNDLE_FROZEN ?= true
+	RUBYCRITIC_FLAGS += --mode-ci
+endif
 
 # export
 export BUNDLE_FORCE_RUBY_PLATFORM
@@ -56,6 +66,16 @@ ruby-format: _bundle-install-required
 	$(Q)${RUBOCOP} -a
 .format:: ruby-format # Add rubocop to `make format`
 
+endif
+
+# RubyCritic targets
+ifneq ($(RUBYCRITIC_ENABLED),)
+
+.PHONY: ruby-critic
+ruby-critic: _bundle-install-required
+	@$(call log,info,"[Ruby] Rubycritic...",1)
+#   $(Q)$(GIT) fetch origin $(CI_DEFAULT_BRANCH):$(CI_DEFAULT_BRANCH)
+	$(Q)$(RUBYCRITIC) $(RUBYCRITIC_FLAGS)
 endif
 
 .PHONY: ruby-test
