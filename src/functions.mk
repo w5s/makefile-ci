@@ -22,3 +22,14 @@ endef
 #  embeddable-text = $(call escape-shell,$(SOME_TEXT))
 #
 escape-shell = $(subst $(newline),\$(newline),$(subst ','\'',$(1)))
+
+# Fallback if log is not defined
+#
+# @example
+# $(call log,info,Message,0)
+#
+ifeq ($(log),)
+define log
+echo [$(1)] $(2)
+endef
+endif
