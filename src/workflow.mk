@@ -140,13 +140,21 @@ develop.local: .develop.pre .develop .develop.post
 .PHONY: deploy deploy.default deploy.local deploy.ci .deploy.pre .deploy .deploy.post
 deploy: .workflow-run-deploy ## Deploy the application to the given environment
 deploy.default: .deploy.pre .deploy .deploy.post
-deploy.local:
+deploy.local: .deploy.check
 	$(Q)echo "WARNING! This will deploy local files"
 	$(Q)read -r -p "Continue? [y/N]" REPLY;echo; \
 	if [[ "$$REPLY" =~ ^[Yy]$$ ]]; then \
 		$(MAKE) deploy.default; \
 	fi
-deploy.ci: deploy.default
+deploy.ci: .deploy.check deploy.default
+.deploy.check:
+	$(Q)if [[ "$$CI_ENVIRONMENT_NAME" == development ]]; then \
+		$(call log,warn,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME),1); \
+		$(call log,warn,CI_ENVIRONMENT_URL=$(CI_ENVIRONMENT_URL),1); \
+	else \
+		$(call log,info,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME),1); \
+		$(call log,info,CI_ENVIRONMENT_URL=$(CI_ENVIRONMENT_URL),1); \
+	fi
 .deploy.pre::
 	@:
 .deploy::
