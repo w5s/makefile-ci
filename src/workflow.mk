@@ -191,10 +191,10 @@ rescue.local: rescue.default
 .PHONY: .workflow-run-%
 ifneq ($(CI),)
 .workflow-run-%:
-	@$(call log,info,"[Make] $* \(CI\)")
+	@$(call log,info,"[Make] $* \(mode=CI\)")
 	@${MAKE} $*.ci
 else
 .workflow-run-%:
-	@$(call log,info,"[Make] $* \(Local\)")
+	@$(call log,info,"[Make] $* \(mode=Local\)")
 	@${MAKE} $*.local
 endif
