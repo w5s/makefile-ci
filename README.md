@@ -52,6 +52,18 @@ make help
 make print-variables
 ```
 
+### Mode CI / Local
+
+To toggle mode use `CI` environment variable. This variable is already set in most CI provider (CircleCI, GitlabCI, etc).
+As a consequence `make {{target}}` will automatically change mode when launched in local or in CI environment.
+
+Nevertheless it possible to run locally in CI mode :
+
+```shell
+# WARNING : recommended for debugging purpose only
+CI=1 make lint
+```
+
 ## Contributing
 
 TODO
