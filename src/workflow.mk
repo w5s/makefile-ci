@@ -149,11 +149,13 @@ deploy.local: .deploy.check
 deploy.ci: .deploy.check deploy.default
 .deploy.check:
 	$(Q)if [[ "$$CI_ENVIRONMENT_NAME" == development ]]; then \
-		$(call log,warn,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME),1); \
-		$(call log,warn,CI_ENVIRONMENT_URL=$(CI_ENVIRONMENT_URL),1); \
+		$(call log,error,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME) (invalid value, only available for local),1); \
 	else \
 		$(call log,info,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME),1); \
-		$(call log,info,CI_ENVIRONMENT_URL=$(CI_ENVIRONMENT_URL),1); \
+	fi; \
+	$(call log,info,CI_ENVIRONMENT_URL=$(CI_ENVIRONMENT_URL),1); \
+	if [[ "$$CI_ENVIRONMENT_NAME" == development ]]; then \
+		exit 1; \
 	fi
 .deploy.pre::
 	@:
