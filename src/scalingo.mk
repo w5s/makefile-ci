@@ -11,6 +11,9 @@ SCALINGO_APP_SUFFIX ?= -$(CI_ENVIRONMENT_NAME)
 ## Scalingo app name (default: $(SCALINGO_APP_PREFIX)$(SCALINGO_APP_SUFFIX))
 SCALINGO_APP ?= $(SCALINGO_APP_PREFIX)$(SCALINGO_APP_SUFFIX)
 
+# Register variables to be displayed before deployment
+DEPLOY_VARIABLES += SCALINGO_APP SCALINGO_REGION
+
 .PHONY: scalingo-archive
 scalingo-archive:
 	@$(call log,info,"[Scalingo] Bundle $(SCALINGO_APP)...",1)
@@ -27,7 +30,5 @@ scalingo-clean:
 .PHONY: scalingo-deploy
 scalingo-deploy: scalingo-archive
 	@$(call log,info,"[Scalingo] Deploy $(SCALINGO_APP)...",1)
-	@$(call log,info,"SCALINGO_APP=$(SCALINGO_APP)...",2)
-	@$(call log,info,"SCALINGO_REGION=$(SCALINGO_REGION)...",2)
 	$(Q)$(SCALINGO) --app $(SCALINGO_APP) --region=$(SCALINGO_REGION) deploy ${SCALINGO_ARCHIVE_FILE}
 .deploy::scalingo-deploy
