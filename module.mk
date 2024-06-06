@@ -28,6 +28,11 @@ endif
 # Include variables
 include $(SELF_DIR)src/functions.mk
 include $(SELF_DIR)src/variables.mk
+
+# Include workflow
+include $(SELF_DIR)src/workflow.mk
+
+# Include each module
 include $(SELF_DIR)src/dotenv.mk
 include $(SELF_DIR)src/cache.mk
 
@@ -55,6 +60,3 @@ include $(SELF_DIR)src/ruby.mk
 endif
 
 include $(SELF_DIR)src/scalingo.mk
-
-include $(SELF_DIR)src/workflow.mk
-
