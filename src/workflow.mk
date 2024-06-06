@@ -152,6 +152,8 @@ deploy.local: .deploy.check
 	fi
 deploy.ci: .deploy.check deploy.default
 .deploy.check:
+# Display CI_PROJECT_NAME
+	@$(call log,info,CI_PROJECT_NAME=$(CI_PROJECT_NAME),1);
 # Check CI_ENVIRONMENT_NAME
 ifeq ($(CI_ENVIRONMENT_NAME),development)
 	@$(call log,error,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME) (invalid value, only available for local),1);
