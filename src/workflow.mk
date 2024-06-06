@@ -5,7 +5,7 @@ all: prepare dependencies lint ## Run all targets
 # PREPARE
 #-------------
 .PHONY: prepare prepare.default prepare.local prepare.ci .prepare.pre .prepare .prepare.post
-prepare: .workflow-run-prepare ## Install external dependencies
+prepare: .workflow-run-prepare ## Install global dependencies and setup the project
 prepare.default: .prepare.pre .prepare .prepare.post
 prepare.local: prepare.default
 # prepare.ci: prepare.default # TODO: implement this
@@ -20,7 +20,7 @@ prepare.local: prepare.default
 # DEPENDENCIES
 #-------------
 .PHONY: dependencies dependencies.default dependencies.local dependencies.ci .dependencies.pre .dependencies .dependencies.post
-dependencies: .workflow-run-dependencies ## Install all dependencies
+dependencies: .workflow-run-dependencies ## Install project dependencies
 dependencies.default: .dependencies.pre .dependencies .dependencies.post
 dependencies.local: dependencies.default
 dependencies.ci: dependencies.default
