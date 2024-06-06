@@ -134,6 +134,10 @@ develop.local: .develop.pre .develop .develop.post
 .develop.post::
 	@:
 
+# A list of variable names that will be displayed before deployment
+DEPLOY_VARIABLES := \
+	CI_ENVIRONMENT_URL
+
 #-------------
 # DEPLOY
 #-------------
@@ -148,15 +152,22 @@ deploy.local: .deploy.check
 	fi
 deploy.ci: .deploy.check deploy.default
 .deploy.check:
-	$(Q)if [[ "$$CI_ENVIRONMENT_NAME" == development ]]; then \
-		$(call log,error,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME) (invalid value, only available for local),1); \
-	else \
-		$(call log,info,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME),1); \
-	fi; \
-	$(call log,info,CI_ENVIRONMENT_URL=$(CI_ENVIRONMENT_URL),1); \
-	if [[ "$$CI_ENVIRONMENT_NAME" == development ]]; then \
-		exit 1; \
-	fi
+# Check CI_ENVIRONMENT_NAME
+ifeq ($(CI_ENVIRONMENT_NAME),development)
+	@$(call log,error,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME) (invalid value, only available for local),1);
+else
+	@$(call log,info,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME),1);
+endif
+# Display important deploy variables
+	@$(foreach V,$(sort $(DEPLOY_VARIABLES)), \
+		$(call log,info,$V=$($V),1); \
+	)
+# Stop program if error
+ifeq ($(CI_ENVIRONMENT_NAME),development)
+	@$(call log,fatal,Deployment stopped,1);
+	$(Q)exit 1;
+endif
+
 .deploy.pre::
 	@:
 .deploy::
