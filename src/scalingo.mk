@@ -4,8 +4,12 @@ SCALINGO_CACHE_PATH := $(PROJECT_CACHE_PATH)/scalingo
 SCALINGO_ARCHIVE_FILE := $(SCALINGO_CACHE_PATH)/scalingo-app.tar.gz
 ## Scalingo region (default: osc-fr1)
 SCALINGO_REGION ?= osc-fr1
-## Scalingo app name (default: $(CI_PROJECT_NAME)-$(CI_ENVIRONMENT_NAME))
-SCALINGO_APP ?= $(CI_PROJECT_NAME)-$(CI_ENVIRONMENT_NAME)
+## Scalingo default app prefix (default: $(CI_PROJECT_NAME))
+SCALINGO_APP_PREFIX ?= $(CI_PROJECT_NAME)
+## Scalingo default app suffix (default: -$(CI_ENVIRONMENT_NAME))
+SCALINGO_APP_SUFFIX ?= -$(CI_ENVIRONMENT_NAME)
+## Scalingo app name (default: $(SCALINGO_APP_PREFIX)$(SCALINGO_APP_SUFFIX))
+SCALINGO_APP ?= $(SCALINGO_APP_PREFIX)$(SCALINGO_APP_SUFFIX)
 
 .PHONY: scalingo-archive
 scalingo-archive:
