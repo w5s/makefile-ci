@@ -193,7 +193,7 @@ export CI_APPLICATION_TAG
 CI_VARIABLES += CI_APPLICATION_TAG
 
 # CUSTOM variable : build type
-## Type of build (release|debug)
+## Type of build (release/debug)
 CI_BUILD_TYPE ?=
 ifeq ($(CI_BUILD_TYPE),)
 	ifneq ($(CI),)
