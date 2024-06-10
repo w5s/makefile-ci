@@ -8,6 +8,9 @@ endif
 
 ifneq ($(RUBY_ENABLED),)
 
+## Ruby cache path (default: .cache/ruby)
+RUBY_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/ruby
+
 ## Ruby version
 RUBY_VERSION ?=
 # Detect ruby version
@@ -46,6 +49,13 @@ endif
 # export
 export BUNDLE_FORCE_RUBY_PLATFORM
 
+# Create make cache directory
+$(RUBY_CACHE_PATH):
+	$(Q)${MKDIRP} $(RUBY_CACHE_PATH)
+
+$(RUBY_CACHE_PATH)/ruby-version: $(RUBY_CACHE_PATH)
+	$(Q)echo $(RUBY_VERSION) > $@
+
 ${BUNDLE_CACHE_PATH}:
 	@[ ! -z "${BUNDLE_CACHE_PATH}" ] && ${MKDIRP} "${BUNDLE_CACHE_PATH}"
 
@@ -56,9 +66,19 @@ _bundle-install-required:
 	@$(call log,info,"[Ruby] Ensure dependencies....",1)
 	$(Q)bundle check
 
-# Add `bundle install` to `make install`
+# ruby-setup
+.PHONY: ruby-setup
+ruby-setup: $(RUBY_CACHE_PATH)/ruby-version
+ifneq ($(shell ruby -v),v$(RUBY_VERSION))
+	@$(call log,info,"[Ruby] Install Ruby...",1)
+	$(Q)$(ASDF) plugin add ruby
+	$(Q)$(ASDF) install ruby
+endif
+.setup:: ruby-setup # Add to `make setup`
+
+# ruby-install
 .PHONY: ruby-install
-ruby-install:
+ruby-install: ruby-setup
 	@$(call log,info,"[Ruby] Install dependencies....",1)
 	$(Q)if [ -z "$(BUNDLE_PATH)" ]; then \
 		${BUNDLE} config unset --local path; \
