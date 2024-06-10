@@ -1,7 +1,7 @@
 # Include target only if enabled
 ifneq ($(NODEJS_ENABLED),)
 
-## Make cache path (default: .cache/node)
+## NodeJS cache path (default: .cache/node)
 NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 
 ## NodeJS package manager (npm,pnpm,yarn,yarn-berry)
@@ -79,15 +79,19 @@ $(NODEJS_CACHE_PATH)/node-version: $(NODEJS_CACHE_PATH)
 	$(Q)echo $(NODEJS_VERSION) > $@
 
 .PHONY: node-setup
-node-setup:
+node-setup: $(NODEJS_CACHE_PATH)/node-version
+ifneq ($(shell node -v),v$(NODEJS_VERSION))
+	@$(call log,info,"[NodeJS] Install NodeJS...",1)
+	$(Q)$(ASDF) plugin add nodejs
+	$(Q)$(ASDF) install nodejs
+endif
 ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
-	@$(call log,info,"[NodeJS] Install package manager...",1)
 	$(Q)corepack enable
 endif
 .setup:: node-setup # Add to `make setup`
 
 .PHONY: node-install
-node-install:
+node-install: node-setup
 	@$(call log,info,"[NodeJS] Install dependencies...",1)
 	$(Q)${NODEJS_INSTALL}
 .dependencies:: node-install	# Add `npm install` to `make install`
