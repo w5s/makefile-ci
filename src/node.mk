@@ -4,13 +4,18 @@ ifneq ($(NODEJS_ENABLED),)
 ## Make cache path (default: .cache/node)
 NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 
-## NodeJS package manager (yarn,npm)
+## NodeJS package manager (npm,pnpm,yarn,yarn-berry)
 NODEJS_PACKAGE_MANAGER ?=
 # Detect nodejs package manager
 ifeq ($(NODEJS_PACKAGE_MANAGER),)
-	NODEJS_ENABLED := true
 	ifneq ($(wildcard yarn.lock),)
-		NODEJS_PACKAGE_MANAGER = yarn
+		ifneq ($(wildcard .yarnrc.yml),)
+			NODEJS_PACKAGE_MANAGER = yarn-berry
+		else
+			NODEJS_PACKAGE_MANAGER = yarn
+		endif
+	else ifneq ($(wildcard pnpm-lock.yaml),)
+		NODEJS_PACKAGE_MANAGER = pnpm
 	else
 		NODEJS_PACKAGE_MANAGER = npm
 	endif
@@ -31,12 +36,26 @@ endif
 export NODEJS_VERSION
 
 # Define install command
-ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
-# Yarn package manager should be used
+ifeq ($(NODEJS_PACKAGE_MANAGER),yarn-berry)
+# Yarn berry
 	ifeq ($(CI),)
 		NODEJS_INSTALL = yarn install
 	else
 		NODEJS_INSTALL = yarn install --immutable
+	endif
+else ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
+# Yarn
+	ifeq ($(CI),)
+		NODEJS_INSTALL = yarn install
+	else
+		NODEJS_INSTALL = yarn install --frozen-file
+	endif
+else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
+# PNPM
+	ifeq ($(CI),)
+		NODEJS_INSTALL = pnpm install
+	else
+		NODEJS_INSTALL = pnpm install --frozen-file
 	endif
 else
 # NPM should be used
