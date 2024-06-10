@@ -24,8 +24,7 @@ devcontainer-up: devcontainers-cli
 devcontainer-start: devcontainer-up
 	$(Q)${DEVCONTAINER} exec $(DEVCONTAINER_FLAGS) /bin/zsh
 
-# Add `@devcontainers/cli` to `make prepare`
-.PHONY: .prepare
-.prepare:: devcontainers-cli
+.PHONY: .setup
+.setup:: devcontainers-cli # Add `@devcontainers/cli` to `make setup`
 endif
 

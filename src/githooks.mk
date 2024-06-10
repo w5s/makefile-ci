@@ -10,4 +10,4 @@ ifneq ($(shell ${GIT} config core.hooksPath), $(PROJECT_GITHOOKS_PATH))
 	$(Q)${GIT} config core.hooksPath ${PROJECT_GITHOOKS_PATH}
 endif
 
-.prepare:: githooks-install # Install githooks during `make prepare`
+.setup:: githooks-install # Install githooks during `make setup`

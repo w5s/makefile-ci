@@ -8,6 +8,23 @@ endif
 
 ifneq ($(RUBY_ENABLED),)
 
+## Ruby version
+RUBY_VERSION ?=
+# Detect ruby version
+ifeq ($(RUBY_VERSION),)
+	ifneq ($(wildcard .tool-versions),)
+		RUBY_VERSION = $(shell cat .tool-versions | grep ruby | awk '{print $$2}')
+	else ifneq ($(wildcard .ruby-version),)
+		RUBY_VERSION = $(shell cat .ruby-version)
+	else
+		RUBY_VERSION =
+	endif
+endif
+export RUBY_VERSION
+
+## Bundler gem version
+BUNDLER_VERSION ?= $(shell if [ -e Gemfile.lock ]; then grep "BUNDLED WITH" Gemfile.lock -A 1 | grep -v "BUNDLED WITH" | tr -d "[:space:]"; else echo ""; fi)
+
 # BUNDLE_PATH ?= ${PROJECT_VENDOR_PATH}/bundle
 BUNDLE_INSTALL := ${BUNDLE} install
 RUBOCOP := ${BUNDLE} exec rubocop

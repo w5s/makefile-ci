@@ -1,19 +1,19 @@
 .PHONY: all
-all: prepare dependencies lint ## Run all targets
+all: setup dependencies lint ## Run all targets
 
 #-------------
-# PREPARE
+# SETUP
 #-------------
-.PHONY: prepare prepare.default prepare.local prepare.ci .prepare.pre .prepare .prepare.post
-prepare: .workflow-run-prepare ## Install global dependencies and setup the project
-prepare.default: .prepare.pre .prepare .prepare.post
-prepare.local: prepare.default
-# prepare.ci: prepare.default # TODO: implement this
-.prepare.pre::
+.PHONY: setup setup.default setup.local setup.ci .setup.pre .setup .setup.post
+setup: .workflow-run-setup ## Install global dependencies and setup the project
+setup.default: .setup.pre .setup .setup.post
+setup.local: setup.default
+# setup.ci: setup.default # TODO: implement this
+.setup.pre::
 	@:
-.prepare::
+.setup::
 	@:
-.prepare.post::
+.setup.post::
 	@:
 
 #-------------

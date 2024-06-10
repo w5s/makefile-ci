@@ -1,10 +1,11 @@
-
-## NodeJS package manager (yarn,npm)
-NODEJS_PACKAGE_MANAGER ?=
-
 # Include target only if enabled
 ifneq ($(NODEJS_ENABLED),)
 
+## Make cache path (default: .cache/node)
+NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
+
+## NodeJS package manager (yarn,npm)
+NODEJS_PACKAGE_MANAGER ?=
 # Detect nodejs package manager
 ifeq ($(NODEJS_PACKAGE_MANAGER),)
 	NODEJS_ENABLED := true
@@ -14,6 +15,20 @@ ifeq ($(NODEJS_PACKAGE_MANAGER),)
 		NODEJS_PACKAGE_MANAGER = npm
 	endif
 endif
+
+## NodeJS version
+NODEJS_VERSION ?=
+# Detect nodejs version
+ifeq ($(NODEJS_VERSION),)
+	ifneq ($(wildcard .tool-versions),)
+		NODEJS_VERSION = $(shell cat .tool-versions | grep nodejs | awk '{print $$2}')
+	else ifneq ($(wildcard .node-version),)
+		NODEJS_VERSION = $(shell cat .node-version)
+	else ifneq ($(wildcard .nvmrc),)
+		NODEJS_VERSION = $(shell cat .nvmrc)
+	endif
+endif
+export NODEJS_VERSION
 
 # Define install command
 ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
@@ -37,13 +52,20 @@ _node-install-required:
 	@$(call log,debug,"Not Implemented yet....",2)
 # TODO: implement this
 
-.PHONY: node-prepare
-node-prepare:
+# Create make cache directory
+$(NODEJS_CACHE_PATH):
+	$(Q)${MKDIRP} $(NODEJS_CACHE_PATH)
+
+$(NODEJS_CACHE_PATH)/node-version: $(NODEJS_CACHE_PATH)
+	$(Q)echo $(NODEJS_VERSION) > $@
+
+.PHONY: node-setup
+node-setup:
 ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
 	@$(call log,info,"[NodeJS] Install package manager...",1)
 	$(Q)corepack enable
 endif
-.prepare:: node-prepare # Add to `make prepare`
+.setup:: node-setup # Add to `make setup`
 
 .PHONY: node-install
 node-install:
