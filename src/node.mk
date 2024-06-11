@@ -4,6 +4,9 @@ ifneq ($(NODEJS_ENABLED),)
 ## NodeJS cache path (default: .cache/node)
 NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 
+# NodeJS version manager
+NODEJS_VERSION_MANAGER := $(call resolve-command,asdf)
+
 ## NodeJS package manager (npm,pnpm,yarn,yarn-berry)
 NODEJS_PACKAGE_MANAGER ?=
 # Detect nodejs package manager
@@ -81,9 +84,15 @@ $(NODEJS_CACHE_PATH)/node-version: $(NODEJS_CACHE_PATH)
 .PHONY: node-setup
 node-setup: $(NODEJS_CACHE_PATH)/node-version
 ifneq ($(shell node -v),v$(NODEJS_VERSION))
-	@$(call log,info,"[NodeJS] Install NodeJS...",1)
+	@$(call log,info,"[NodeJS] Install NodeJS with with $(NODEJS_VERSION_MANAGER)...",1)
+
+ifeq ($(NODEJS_VERSION_MANAGER),asdf)
 	$(Q)$(ASDF) plugin add nodejs
-	$(Q)$(ASDF) install nodejs
+	$(Q)$(ASDF) install nodejs $(NODEJS_VERSION)
+else
+	@$(call panic,[NodeJS] Unsupported nodejs version manager $(NODEJS_VERSION_MANAGER))
+endif
+
 endif
 ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
 	$(Q)corepack enable
