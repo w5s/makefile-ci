@@ -18,7 +18,7 @@ ifeq ($(RUBY_VERSION),)
 	ifneq ($(wildcard .tool-versions),)
 		RUBY_VERSION = $(shell cat .tool-versions | grep ruby | awk '{print $$2}')
 	else ifneq ($(wildcard .ruby-version),)
-		RUBY_VERSION = $(shell cat .ruby-version)
+		RUBY_VERSION = $(shell cat .ruby-version | head -n 1 | sed -Ee 's/^ruby-([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)$/\1/)
 	else
 		RUBY_VERSION =
 	endif
