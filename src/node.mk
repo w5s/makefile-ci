@@ -4,8 +4,8 @@ ifneq ($(NODEJS_ENABLED),)
 ## NodeJS cache path (default: .cache/node)
 NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 
-# NodeJS version manager
-NODEJS_VERSION_MANAGER := $(call resolve-command,asdf nvm nodenv)
+## NodeJS version manager
+NODEJS_VERSION_MANAGER ?= $(call resolve-command,asdf nvm nodenv)
 
 ## NodeJS package manager (npm,pnpm,yarn,yarn-berry)
 NODEJS_PACKAGE_MANAGER ?=

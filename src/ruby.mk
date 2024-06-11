@@ -11,8 +11,8 @@ ifneq ($(RUBY_ENABLED),)
 ## Ruby cache path (default: .cache/ruby)
 RUBY_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/ruby
 
-# Ruby version manager
-RUBY_VERSION_MANAGER := $(call resolve-command,asdf rbenv rvm)
+## Ruby version manager
+RUBY_VERSION_MANAGER ?= $(call resolve-command,asdf rbenv rvm)
 
 ## Ruby version
 RUBY_VERSION ?=
