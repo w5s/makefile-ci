@@ -33,3 +33,22 @@ define log
 echo [$(1)] $(2)
 endef
 endif
+
+# Returns the first command found
+#
+# @example
+# NODE_VERSION_MANAGER := $(call resolve-command,asdf nodenv nvm)
+#
+define resolve-command
+	$(firstword $(foreach cmd,$(1),$(shell which $(cmd) &>/dev/null && echo $(cmd))))
+endef
+
+# Log a message and exit program
+#
+# @example
+# $(call panic,Something wrong happened !)
+#
+define panic
+	$(call log,fatal,$(1))
+	exit 1
+endef
