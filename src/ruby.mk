@@ -11,6 +11,9 @@ ifneq ($(RUBY_ENABLED),)
 ## Ruby cache path (default: .cache/ruby)
 RUBY_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/ruby
 
+# Ruby version manager
+RUBY_VERSION_MANAGER := $(call resolve-command,asdf rbenv rvm)
+
 ## Ruby version
 RUBY_VERSION ?=
 # Detect ruby version
@@ -70,9 +73,13 @@ _bundle-install-required:
 .PHONY: ruby-setup
 ruby-setup: $(RUBY_CACHE_PATH)/ruby-version
 ifneq ($(shell ruby -v),v$(RUBY_VERSION))
-	@$(call log,info,"[Ruby] Install Ruby...",1)
+	@$(call log,info,"[Ruby] Install Ruby with $(RUBY_VERSION_MANAGER)...",1)
+ifeq ($(RUBY_VERSION_MANAGER),asdf)
 	$(Q)$(ASDF) plugin add ruby
-	$(Q)$(ASDF) install ruby
+	$(Q)$(ASDF) install ruby $(RUBY_VERSION)
+else
+	@$(call panic,[Ruby] Unsupported ruby version manager $(RUBY_VERSION_MANAGER))
+endif
 endif
 .setup:: ruby-setup # Add to `make setup`
 
