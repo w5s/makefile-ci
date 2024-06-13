@@ -1,6 +1,3 @@
-# Include target only if enabled
-ifneq ($(NODEJS_ENABLED),)
-
 ## NodeJS cache path (default: .cache/node)
 NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 
@@ -83,6 +80,8 @@ $(NODEJS_CACHE_PATH)/node-version: $(NODEJS_CACHE_PATH)
 
 .PHONY: node-setup
 node-setup: $(NODEJS_CACHE_PATH)/node-version
+
+# Try installing node using $(NODEJS_VERSION_MANAGER)
 ifneq ($(shell node -v),v$(NODEJS_VERSION))
 	@$(call log,info,"[NodeJS] Install NodeJS with with $(NODEJS_VERSION_MANAGER)...",1)
 
@@ -94,8 +93,16 @@ else
 endif
 
 endif
+
+# Try installing package manager
 ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
 	$(Q)corepack enable
+
+# Only for asdf we have to reshim after corepack
+ifeq ($(NODEJS_VERSION_MANAGER),asdf)
+	asdf reshim nodejs
+endif
+
 endif
 .setup:: node-setup # Add to `make setup`
 
@@ -129,4 +136,3 @@ node-test-e2e: _node-install-required
 	$(Q)npm run test:e2e
 .test-system:: node-test-e2e # Add rspec to `make test-system`
 
-endif
