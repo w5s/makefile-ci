@@ -11,14 +11,25 @@ ifeq ($(NODEJS_PACKAGE_MANAGER),)
 	ifneq ($(wildcard yarn.lock),)
 		ifneq ($(wildcard .yarnrc.yml),)
 			NODEJS_PACKAGE_MANAGER = yarn-berry
+			NODEJS_PACKAGE_MANAGER_COMMAND = yarn
 		else
 			NODEJS_PACKAGE_MANAGER = yarn
+			NODEJS_PACKAGE_MANAGER_COMMAND = yarn
 		endif
 	else ifneq ($(wildcard pnpm-lock.yaml),)
 		NODEJS_PACKAGE_MANAGER = pnpm
+		NODEJS_PACKAGE_MANAGER_COMMAND = pnpm
 	else
 		NODEJS_PACKAGE_MANAGER = npm
+		NODEJS_PACKAGE_MANAGER_COMMAND = npm
 	endif
+endif
+
+# Corepack enable command
+ifeq ($(NODEJS_VERSION_MANAGER),asdf)
+	COREPACK_ENABLE := corepack enable && asdf reshim nodejs
+else
+	COREPACK_ENABLE := corepack enable
 endif
 
 ## NodeJS version
@@ -83,7 +94,7 @@ node-setup: $(NODEJS_CACHE_PATH)/node-version
 
 # Try installing node using $(NODEJS_VERSION_MANAGER)
 ifneq ($(shell node -v),v$(NODEJS_VERSION))
-	@$(call log,info,"[NodeJS] Install NodeJS with with $(NODEJS_VERSION_MANAGER)...",1)
+	@$(call log,info,"[NodeJS] Install NodeJS with $(NODEJS_VERSION_MANAGER)...",1)
 
 ifeq ($(NODEJS_VERSION_MANAGER),asdf)
 	$(Q)$(ASDF) plugin add nodejs
@@ -96,13 +107,11 @@ endif
 
 # Try installing package manager
 ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
-	$(Q)corepack enable
-
 # Only for asdf we have to reshim after corepack
-ifeq ($(NODEJS_VERSION_MANAGER),asdf)
-	asdf reshim nodejs
-endif
-
+	$(Q)if [ ! $(NODEJS_PACKAGE_MANAGER_COMMAND) -v &>/dev/null ]; then \
+	  $(call log,info,"[NodeJS] Install $(NODEJS_PACKAGE_MANAGER)...",1); \
+		$(COREPACK_ENABLE); \
+	fi
 endif
 .setup:: node-setup # Add to `make setup`
 
