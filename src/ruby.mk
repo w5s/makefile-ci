@@ -6,8 +6,6 @@ ifneq ($(wildcard .rubycritic.yml),)
 	RUBYCRITIC_ENABLED := true
 endif
 
-ifneq ($(RUBY_ENABLED),)
-
 ## Ruby cache path (default: .cache/ruby)
 RUBY_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/ruby
 
@@ -128,5 +126,3 @@ ruby-test: _bundle-install-required
 	$(Q)${RAKE} db:migrate || echo "Warning: Migration failed"
 	$(Q)${RAKE} spec
 .test:: ruby-test # Add rspec to `make test`
-
-endif
