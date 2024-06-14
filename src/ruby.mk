@@ -70,7 +70,9 @@ _bundle-install-required:
 # ruby-setup
 .PHONY: ruby-setup
 ruby-setup: $(RUBY_CACHE_PATH)/ruby-version
-ifneq ($(shell ruby -v),v$(RUBY_VERSION))
+ifeq ($(RUBY_VERSION),)
+	@$(call log,warn,"[Ruby] Cannot install ruby. Please set RUBY_VERSION or configure .tools-versions",1)
+else ifneq ($(shell ruby -v | awk '{ print $$2 }'),$(RUBY_VERSION))
 	@$(call log,info,"[Ruby] Install Ruby with $(RUBY_VERSION_MANAGER)...",1)
 ifeq ($(RUBY_VERSION_MANAGER),asdf)
 	$(Q)$(ASDF) plugin add ruby
