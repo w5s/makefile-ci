@@ -9,7 +9,7 @@ endif
 ## Ruby cache path (default: .cache/ruby)
 RUBY_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/ruby
 
-## Ruby version manager
+## Ruby version manager used to install node (asdf, rbenv, ...)
 RUBY_VERSION_MANAGER ?= $(call resolve-command,asdf rbenv rvm)
 
 ## Ruby version
@@ -28,22 +28,24 @@ export RUBY_VERSION
 
 ## Bundler gem version
 BUNDLER_VERSION ?= $(shell if [ -e Gemfile.lock ]; then grep "BUNDLED WITH" Gemfile.lock -A 1 | grep -v "BUNDLED WITH" | tr -d "[:space:]"; else echo ""; fi)
+## Bundler gem installation path
+BUNDLE_PATH ?=
+## Bundle `install` will exit with error if Gemfile.lock is not up to date
+BUNDLE_FROZEN ?=
+## Bundle `install` will force platform
+BUNDLE_FORCE_RUBY_PLATFORM ?=
 
-# BUNDLE_PATH ?= ${PROJECT_VENDOR_PATH}/bundle
 BUNDLE_INSTALL := ${BUNDLE} install
 RUBOCOP := ${BUNDLE} exec rubocop
 RUBYCRITIC := ${BUNDLE} exec rubycritic
 # RUBYCRITIC_FLAGS :=
 RAKE := ${BUNDLE} exec rake
 
-## Bundle `install` will exit with error if Gemfile.lock is not up to date
-BUNDLE_FROZEN ?=
-## Bundle `install` will force platform
-BUNDLE_FORCE_RUBY_PLATFORM ?=
 ifeq ($(CI),)
 # do nothing
 else
 	BUNDLE_FROZEN ?= true
+	BUNDLE_PATH ?= ${PROJECT_VENDOR_PATH}/bundle
 	RUBYCRITIC_FLAGS += --mode-ci
 endif
 
@@ -63,7 +65,9 @@ ${BUNDLE_CACHE_PATH}:
 ${BUNDLE_PATH}: ${BUNDLE_CACHE_PATH}
 	@[ ! -z "${BUNDLE_PATH}" ] && ${MKDIRP} "${BUNDLE_PATH}"
 
-_bundle-install-required:
+# bundle install only if needed
+.PHONY: ruby-check-install
+ruby-check-install:
 	@$(call log,info,"[Ruby] Ensure dependencies....",1)
 	$(Q)bundle check
 
@@ -99,13 +103,13 @@ ruby-install: ruby-setup
 ifneq ($(RUBOCOP_ENABLED),)
 
 .PHONY: ruby-lint
-ruby-lint: _bundle-install-required
+ruby-lint: ruby-check-install
 	@$(call log,info,"[Ruby] Lint sources...",1)
 	$(Q)${RUBOCOP}
 .lint:: ruby-lint # Add rubocop to `make lint`
 
 .PHONY: ruby-format
-ruby-format: _bundle-install-required
+ruby-format: ruby-check-install
 	@$(call log,info,"[Ruby] Format sources...",1)
 	$(Q)${RUBOCOP} -a
 .format:: ruby-format # Add rubocop to `make format`
@@ -116,14 +120,14 @@ endif
 ifneq ($(RUBYCRITIC_ENABLED),)
 
 .PHONY: ruby-critic
-ruby-critic: _bundle-install-required
+ruby-critic: ruby-check-install
 	@$(call log,info,"[Ruby] Rubycritic...",1)
 #   $(Q)$(GIT) fetch origin $(CI_DEFAULT_BRANCH):$(CI_DEFAULT_BRANCH)
 	$(Q)$(RUBYCRITIC) $(RUBYCRITIC_FLAGS)
 endif
 
 .PHONY: ruby-test
-ruby-test: _bundle-install-required
+ruby-test: ruby-check-install
 	@$(call log,info,"[Ruby] Test sources...",1)
 	$(Q)${RAKE} db:migrate || echo "Warning: Migration failed"
 	$(Q)${RAKE} spec
