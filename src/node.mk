@@ -1,7 +1,7 @@
 ## NodeJS cache path (default: .cache/node)
 NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 
-## NodeJS version manager
+## NodeJS version manager used to install node (asdf, nvm, ...)
 NODEJS_VERSION_MANAGER ?= $(call resolve-command,asdf nvm nodenv)
 
 ## NodeJS package manager (npm,pnpm,yarn,yarn-berry)
@@ -51,6 +51,8 @@ ifeq ($(NODEJS_PACKAGE_MANAGER),yarn-berry)
 # Yarn berry
 	ifeq ($(CI),)
 		NODEJS_INSTALL = yarn install
+		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
+		YARN_ENABLE_GLOBAL_CACHE ?= false
 	else
 		NODEJS_INSTALL = yarn install --immutable
 	endif
@@ -58,6 +60,8 @@ else ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
 # Yarn
 	ifeq ($(CI),)
 		NODEJS_INSTALL = yarn install
+		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
+		YARN_ENABLE_GLOBAL_CACHE ?= false
 	else
 		NODEJS_INSTALL = yarn install --frozen-file
 	endif
@@ -77,17 +81,23 @@ else
 	endif
 endif
 
-_node-install-required:
-	@$(call log,info,"[NodeJS] Ensure dependencies....",1)
-	@$(call log,debug,"Not Implemented yet....",2)
-# TODO: implement this
-
 # Create make cache directory
 $(NODEJS_CACHE_PATH):
 	$(Q)${MKDIRP} $(NODEJS_CACHE_PATH)
 
+# A file that contains node required version
 $(NODEJS_CACHE_PATH)/node-version: $(NODEJS_CACHE_PATH)
 	$(Q)echo $(NODEJS_VERSION) > $@
+
+# A target that will run node install only if lockfile was changed
+node_modules/.make-state: $(wildcard yarn.lock package-lock.json)
+	@$(call log,info,"[NodeJS] Ensure dependencies....",1)
+	$(Q)${NODEJS_INSTALL}
+	$(Q)${TOUCH} $@
+
+# Install dependencies only if needed
+.PHONY: node-check-install
+node-check-install: node-setup node_modules/.make-state
 
 .PHONY: node-setup
 node-setup: $(NODEJS_CACHE_PATH)/node-version
@@ -124,25 +134,25 @@ node-install: node-setup
 .dependencies:: node-install	# Add `npm install` to `make install`
 
 .PHONY: node-lint
-node-lint: _node-install-required
+node-lint: node-check-install
 	@$(call log,info,"[NodeJS] Lint sources...",1)
 	$(Q)npm run lint --if-present
 .lint::	node-lint # Add `npm run lint` to `make lint`
 
 .PHONY: node-format
-node-format: _node-install-required
+node-format: node-check-install
 	@$(call log,info,"[NodeJS] Format sources...",1)
 	$(Q)npm run format --if-present
 .format:: node-format # Add `npm run test` to `make test`
 
 .PHONY: node-test
-node-test: _node-install-required
+node-test: node-check-install
 	@$(call log,info,"[NodeJS] Test sources...",1);
 	$(Q)npm run test
 .test:: node-test # Add npm test to `make test`
 
 .PHONY: node-test-e2e
-node-test-e2e: _node-install-required
+node-test-e2e: node-check-install
 	@$(call log,info,"[NodeJS] Test system...",1)
 	$(Q)npm run test:e2e
 .test-system:: node-test-e2e # Add rspec to `make test-system`
