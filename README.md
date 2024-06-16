@@ -2,57 +2,94 @@
 
 [![License][license-image]][license-url]
 
-> Default makefile workflow for makefiles
+> Default makefile workflow for continuous integration local and remote (GitlabCI, CircleCI, etc)
 
-## Getting Started
+## Purpose
 
-This package provides a common CI workflow for build apps.
-By using makefile you will be able :
+This package provides a collection of makefiles that should be included in a project as git module (using [makefile-core](https://github.com/Captive-Studio/makefile-core))
 
-- to configure easily CI independently from the project technology (ex: `make build` will always build sources wether it is ruby/nodejs/...)
-- to launch locally the CI
-- to debug the CI easily
+These makefiles are designed to _standardize_ and _simplify_ the workflow to `build`, `run` and `deploy` the project.
+
+As a result, the developer only has to learn a restricted set of command (ex: `make help`, `make build`, `make test`) to manipulate the project without the need to know about the underlying stack.
 
 ## Features
 
 - 🔧 Zero Conf philosophy
-  - ✓ Default configuration for most common cases
-  - ✓ Override settings in the project `Makefile` if needed
-- Supported Technologies :
-  - ASDF
-  - NodeJS
-  - Ruby
-  - Docker
+  - ✓ Auto detect stack from project source code (ex: `package.json` for NodeJS, `Gemfile` for ruby, etc)
+  - ✓ Almost everything should work with very few configuration for the most common cases
+  - ✓ Everything should be overridable in `config.mk` or `Makefile` if needed
+- 💡 Use simple `make` targets for better productivity
+  - Generic target will run the equivalent task in every language used by the project (ex: `make lint` will run `npm run lint`, `bundle exec rubocop`, etc)
+  - No more "I forgot to do `bundle install`, `asdf install`, etc", `make` will do it for you in a performant way 
+- 💻 Support local and CI environment (with `CI` environment variable)
+- 👍 Supported technologies :
+  - ✓ NodeJS
+  - ✓ Ruby
+  - ✓ Docker
+- 🤖 CI friendly !
+  - 🔧 Easy configuration : create a job per target (lint => `make lint`, test => `make test`, etc)
+  - 🐛 Easy debugging (just run `CI=1 make xxxx` locally to reproduce locally the CI command)
+  - 👍 Supported CI provider
+    - CircleCI
+- 🚀 Deploy target
+  - Scalingo
+  - (More coming)
 
-## Usage
+## Getting started
 
-### Installer
+### 1. Installation
 
-Pre-requisite : [Makefile Core](https://github.com/Captive-Studio/makefile-core)
+#### Step 1 : Install makefile-core
+
+```console
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Captive-Studio/makefile-core/main/install.sh)"
+```
+
+source: [Makefile Core](https://github.com/Captive-Studio/makefile-core)
+
+#### Step 2 : Install makefile-ci
 
 ```console
 make self-add url=https://github.com/Captive-Studio/makefile-ci
 ```
 
-## Documentation
+#### Step 3 : Verification
 
-### Display information
+```console
+make help
+```
 
-`makefile-ci` is compatible with `makefile-core` auto-documentation
+### 2. Make configuration
 
-**Display all targets and variables**
+`<project_root>/config.mk`
+```make
+# Put here variables
+SCALINGO_APP_PREFIX ?= my-special-prefix-
+```
+
+### 3. CI configuration
+
+#### CircleCI
+
+```console
+make .circleci/config.yml
+```
+
+## Usage
+
+### `make help` : Display all targets and variables
 
 ```shell
 make help
 ```
 
-**Display all variables and their value**
+### `make print-variables` : Display all variables and their value
 
 ```shell
 make print-variables
 ```
 
-### Mode CI / Local
+### `CI=1 make {{target}}` : Run in CI mode locally (for debugging)
 
 To toggle mode use `CI` environment variable. This variable is already set in most CI provider (CircleCI, GitlabCI, etc).
 As a consequence `make {{target}}` will automatically change mode when launched in local or in CI environment.
@@ -70,10 +107,7 @@ TODO
 
 ## Acknowledgement
 
-These repository were inspirations to build makefile-core :
-
-- <https://github.com/ianstormtaylor/makefile-help>
-- <https://github.com/tmatis/42make>
+TODO
 
 ## License
 <!-- AUTO-GENERATED-CONTENT:START (PKG_JSON:template=[${license}][license-url] © ${author}) -->
