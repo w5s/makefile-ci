@@ -16,6 +16,11 @@ ifeq ($(DATE),)
 	DATE := date
 endif
 
+# Makefile CI variable path
+MAKEFILE_CI_SOURCE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+MAKEFILE_CI_PATH := $(shell dirname $(MAKEFILE_CI_SOURCE_PATH))
+MAKEFILE_CI_TEMPLATE_PATH := $(MAKEFILE_CI_PATH)/template
+
 ## Project root path
 PROJECT_PATH ?= $(CURDIR)
 ## Project cache path
