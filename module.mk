@@ -36,10 +36,6 @@ include $(SELF_DIR)src/workflow.mk
 include $(SELF_DIR)src/dotenv.mk
 include $(SELF_DIR)src/cache.mk
 
-ifneq ($(ASDF_ENABLED),)
-include $(SELF_DIR)src/asdf.mk
-endif
-
 ifneq ($(DOCKER_ENABLED),)
 include $(SELF_DIR)src/docker.mk
 include $(SELF_DIR)src/docker-compose.mk
