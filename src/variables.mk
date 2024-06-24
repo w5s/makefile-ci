@@ -1,5 +1,8 @@
 # Project paths
 
+ifeq ($(ASDF),)
+	ASDF = asdf
+endif
 ifeq ($(MKDIRP),)
 	MKDIRP = mkdir -p
 endif
