@@ -25,6 +25,9 @@ ifneq ($(wildcard Gemfile),)
 RUBY_ENABLED ?= true
 endif
 
+## Enable scalingo deployment
+SCALINGO_ENABLED ?=
+
 # Include variables
 include $(SELF_DIR)src/functions.mk
 include $(SELF_DIR)src/variables.mk
@@ -55,4 +58,6 @@ ifneq ($(RUBY_ENABLED),)
 include $(SELF_DIR)src/ruby.mk
 endif
 
+ifneq ($(SCALINGO_ENABLED),)
 include $(SELF_DIR)src/scalingo.mk
+endif
