@@ -155,7 +155,7 @@ deploy.ci: .deploy.check deploy.default
 # Display CI_PROJECT_NAME
 	@$(call log,info,CI_PROJECT_NAME=$(CI_PROJECT_NAME),1);
 # Check CI_ENVIRONMENT_NAME
-ifeq ($(CI_ENVIRONMENT_NAME),development)
+ifeq ($(CI_ENVIRONMENT_NAME),local)
 	@$(call log,error,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME) (invalid value, only available for local),1);
 else
 	@$(call log,info,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME),1);
@@ -165,7 +165,7 @@ endif
 		$(call log,info,$V=$($V),1); \
 	)
 # Stop program if error
-ifeq ($(CI_ENVIRONMENT_NAME),development)
+ifeq ($(CI_ENVIRONMENT_NAME),local)
 	@$(call log,fatal,Deployment stopped,1);
 	$(Q)exit 1;
 endif

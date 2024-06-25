@@ -117,7 +117,12 @@ export CI_JOB_STARTED_AT
 CI_VARIABLES += CI_JOB_STARTED_AT
 
 ## The name of the environment for this job
-CI_ENVIRONMENT_NAME ?= development
+CI_ENVIRONMENT_NAME ?=
+ifeq ($(CI_ENVIRONMENT_NAME),)
+	ifeq ($(CI),)
+		CI_ENVIRONMENT_NAME = local
+	endif
+endif
 export CI_ENVIRONMENT_NAME
 CI_VARIABLES += CI_ENVIRONMENT_NAME
 
