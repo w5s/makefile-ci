@@ -35,6 +35,9 @@ include $(SELF_DIR)src/variables.mk
 # Include workflow
 include $(SELF_DIR)src/workflow.mk
 
+# Include template
+include $(SELF_DIR)src/template.mk
+
 # Include each module
 include $(SELF_DIR)src/dotenv.mk
 include $(SELF_DIR)src/cache.mk
