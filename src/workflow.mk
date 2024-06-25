@@ -144,14 +144,16 @@ DEPLOY_VARIABLES := \
 .PHONY: deploy deploy.default deploy.local deploy.ci .deploy.pre .deploy .deploy.post
 deploy: .workflow-run-deploy ## Deploy the application to the given environment
 deploy.default: .deploy.pre .deploy .deploy.post
-deploy.local: .deploy.check
+deploy.local: .deploy-check
 	$(Q)echo "WARNING! This will deploy local files"
 	$(Q)read -r -p "Continue? [y/N]" REPLY;echo; \
 	if [[ "$$REPLY" =~ ^[Yy]$$ ]]; then \
 		$(MAKE) deploy.default; \
 	fi
-deploy.ci: .deploy.check deploy.default
-.deploy.check:
+deploy.ci: .deploy-check
+	$(MAKE) deploy.default;
+
+.deploy-check:
 # Display CI_PROJECT_NAME
 	@$(call log,info,CI_PROJECT_NAME=$(CI_PROJECT_NAME),1);
 # Check CI_ENVIRONMENT_NAME
