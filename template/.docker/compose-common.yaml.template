@@ -48,8 +48,8 @@ services:
       - '9000'
       - '9001'
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio_pass}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio-root-user}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio-root-password}
     command: server /data --console-address ":9001"
     healthcheck:
       test: [CMD, curl, -f, 'http://localhost:9000/minio/health/live']
