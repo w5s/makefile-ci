@@ -8,7 +8,7 @@ all: setup dependencies lint ## Run all targets
 setup: .workflow-run-setup ## Install global dependencies and setup the project
 setup.default: .setup.pre .setup .setup.post
 setup.local: setup.default
-# setup.ci: setup.default # TODO: implement this
+setup.ci: setup.default
 .setup.pre::
 	@:
 .setup::
@@ -126,7 +126,8 @@ test-system.ci: test-system.default
 .PHONY: develop develop.default develop.local develop.ci .develop.pre .develop .develop.post
 develop: .workflow-run-develop ## Setups a local development environment
 develop.local: .develop.pre .develop .develop.post
-# develop.ci: develop.default Disabled because make no sense...
+develop.ci:
+	@$(call log,warn,"[Develop] Job disabled in CI mode",0)
 .develop.pre::
 	@:
 .develop::
@@ -186,7 +187,9 @@ endif
 rescue: .workflow-run-rescue ## Clean everything in case of problem
 rescue.default: .rescue.pre .rescue .rescue.post
 rescue.local: rescue.default
-# rescue.ci: rescue.default Disabled because make no sense...
+rescue.ci:
+	@$(call log,warn,"[Rescue] Job disabled in CI mode",0)
+
 .rescue.pre::
 	@:
 .rescue::
