@@ -208,12 +208,12 @@ jobs:
       - run:
           command: make test
 
-  test-system:
+  test-e2e:
     <<: *test-base
     steps:
       - before_job
       - run:
-          command: make test-system
+          command: make test-e2e
 
   deploy-base: &deploy-base
     resource_class: small
@@ -248,7 +248,7 @@ workflows:
       - test:
           requires:
             - build
-      - test-system:
+      - test-e2e:
           requires:
             - build
       - deploy-staging:
@@ -256,7 +256,7 @@ workflows:
             - build
             - lint
             - test
-            - test-system
+            - test-e2e
           filters:
             branches:
               only: main

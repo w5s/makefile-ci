@@ -109,15 +109,15 @@ test.ci: test.default
 #-------------
 # TEST SYSTEM (E2E)
 #-------------
-.PHONY: test-system test-system.default test-system.local test-system.ci .test-system.pre .test .test-system.post
-test-system: .workflow-run-test-system ## Run system tests (e2e)
-test-system.local: .test-system.pre .test-system .test-system.post
-test-system.ci: test-system.default
-.test-system.pre::
+.PHONY: test-e2e test-e2e.default test-e2e.local test-e2e.ci .test-e2e.pre .test .test-e2e.post
+test-e2e: .workflow-run-test-e2e ## Run system tests (e2e)
+test-e2e.local: .test-e2e.pre .test-e2e .test-e2e.post
+test-e2e.ci: test-e2e.default
+.test-e2e.pre::
 	@:
-.test-system::
+.test-e2e::
 	@:
-.test-system.post::
+.test-e2e.post::
 	@:
 
 #-------------

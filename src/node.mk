@@ -157,5 +157,5 @@ node-test: node-check-install
 node-test-e2e: node-check-install
 	@$(call log,info,"[NodeJS] Test system...",1)
 	$(Q)npm run test:e2e
-.test-system:: node-test-e2e # Add rspec to `make test-system`
+.test-e2e:: node-test-e2e # Add rspec to `make test-e2e`
 
