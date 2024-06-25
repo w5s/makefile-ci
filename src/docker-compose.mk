@@ -2,7 +2,8 @@
 ## Docker compose file
 DOCKER_COMPOSE_FILE ?=
 ifeq ($(DOCKER_COMPOSE_FILE),)
-	DOCKER_COMPOSE_FILE = $(firstword $(wildcard compose-dev.yml compose.yml docker-compose.yml))
+	.DOCKER_COMPOSE_FILES := compose-dev.yaml compose.yaml docker-compose.yml
+	DOCKER_COMPOSE_FILE = $(firstword $(wildcard $(.DOCKER_COMPOSE_FILES) $(addprefix .docker/,$(.DOCKER_COMPOSE_FILES))))
 endif
 
 # Docker Compose command
