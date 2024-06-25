@@ -1,9 +1,9 @@
-#==================================================================================================
+# ==================================================================================================
 #                             Captive default editorconfig
 #
 #                             ⚠️ DO NOT EDIT this section, see the end of file
-# Generated from https://github.com/Captive-Studio/makefile-ci/blob/main/src/template/.editorconfig.template
-#==================================================================================================
+# Generated from https://github.com/Captive-Studio/makefile-ci/blob/main/template/.editorconfig.template
+# ==================================================================================================
 root = true
 
 [*]
