@@ -152,7 +152,7 @@ deploy.local: .deploy-check
 		$(MAKE) deploy.default; \
 	fi
 deploy.ci: .deploy-check
-	$(MAKE) deploy.default;
+	$(Q)$(MAKE) deploy.default;
 
 .deploy-check:
 # Display CI_PROJECT_NAME
