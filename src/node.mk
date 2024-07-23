@@ -107,7 +107,7 @@ node-setup: $(NODEJS_CACHE_PATH)/node-version
 # Try installing node using $(NODEJS_VERSION_MANAGER)
 ifeq ($(NODEJS_VERSION),)
 	@$(call log,warn,"[NodeJS] Cannot install nodejs. Please set NODEJS_VERSION or configure .tools-versions",1)
-else ifneq ($(shell node -v),v$(NODEJS_VERSION))
+else ifneq ($(shell node -v &2>/dev/null),v$(NODEJS_VERSION))
 	@$(call log,info,"[NodeJS] Install NodeJS with $(NODEJS_VERSION_MANAGER)...",1)
 
 ifeq ($(NODEJS_VERSION_MANAGER),asdf)
