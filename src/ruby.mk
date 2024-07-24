@@ -65,15 +65,11 @@ ${BUNDLE_CACHE_PATH}:
 ${BUNDLE_PATH}: ${BUNDLE_CACHE_PATH}
 	@[ ! -z "${BUNDLE_PATH}" ] && ${MKDIRP} "${BUNDLE_PATH}"
 
-# bundle install only if needed
-.PHONY: ruby-check-install
-ruby-check-install:
-	@$(call log,info,"[Ruby] Ensure dependencies....",1)
-	$(Q)bundle check
-
 # ruby-setup
 .PHONY: ruby-setup
 ruby-setup: $(RUBY_CACHE_PATH)/ruby-version
+
+# Try installing node using $(RUBY_VERSION_MANAGER)
 ifeq ($(RUBY_VERSION),)
 	@$(call log,warn,"[Ruby] Cannot install ruby. Please set RUBY_VERSION or configure .tools-versions",1)
 else ifneq ($(shell ruby -v | awk '{ print $$2 }'),$(RUBY_VERSION))
@@ -84,18 +80,29 @@ ifeq ($(RUBY_VERSION_MANAGER),asdf)
 else
 	@$(call panic,[Ruby] Unsupported ruby version manager $(RUBY_VERSION_MANAGER))
 endif
-endif
-.setup:: ruby-setup # Add to `make setup`
 
-# ruby-install
-.PHONY: ruby-install
-ruby-install: ruby-setup
-	@$(call log,info,"[Ruby] Install dependencies....",1)
+# Configure bundle local project
 	$(Q)if [ -z "$(BUNDLE_PATH)" ]; then \
 		${BUNDLE} config unset --local path; \
 	else \
 		${BUNDLE} config set --local path $(BUNDLE_PATH); \
 	fi
+endif
+.setup:: ruby-setup # Add to `make setup`
+
+# bundle install only if needed
+.PHONY: ruby-check-install
+ruby-check-install: ruby-setup
+  # Test if
+	$(Q)if ! ${BUNDLE} check --dry-run > /dev/null 2>&1; then \
+		$(call log,info,"[Ruby] Ensure dependencies....",1); \
+		$(Q)${BUNDLE_INSTALL}; \
+	fi
+
+# ruby-install
+.PHONY: ruby-install
+ruby-install: ruby-setup
+	@$(call log,info,"[Ruby] Install dependencies....",1)
 	$(Q)${BUNDLE_INSTALL}
 .dependencies:: ruby-install # Add `bundle install` to `make install`
 
