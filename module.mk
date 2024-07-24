@@ -25,8 +25,11 @@ ifneq ($(wildcard Gemfile),)
 RUBY_ENABLED ?= true
 endif
 
-## Enable scalingo deployment
+## Enable Scalingo deployment
 SCALINGO_ENABLED ?=
+
+## Enable Heroku deployment
+HEROKU_ENABLED ?=
 
 # Include variables
 include $(SELF_DIR)src/functions.mk
@@ -63,4 +66,8 @@ endif
 
 ifneq ($(SCALINGO_ENABLED),)
 include $(SELF_DIR)src/scalingo.mk
+endif
+
+ifneq ($(HEROKU_ENABLED),)
+include $(SELF_DIR)src/heroku.mk
 endif
