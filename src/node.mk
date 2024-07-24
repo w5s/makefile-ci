@@ -122,7 +122,7 @@ endif
 # Try installing package manager
 ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
 # Only for asdf we have to reshim after corepack
-	$(Q)if [ ! $(NODEJS_PACKAGE_MANAGER_COMMAND) -v &>/dev/null ]; then \
+	$(Q)if ! $(NODEJS_PACKAGE_MANAGER_COMMAND) -v &>/dev/null; then \
 	  $(call log,info,"[NodeJS] Install $(NODEJS_PACKAGE_MANAGER)...",1); \
 		$(COREPACK_ENABLE); \
 	fi
@@ -159,3 +159,8 @@ node-test-e2e: node-check-install
 	$(Q)npm run test:e2e
 .test-e2e:: node-test-e2e # Add rspec to `make test-e2e`
 
+.PHONY: node-clean
+node-clean: node-check-install
+	@$(call log,info,"[NodeJS] Clean files...",1);
+	$(Q)npm run clean --if-present
+.clean:: node-clean # Add npm run clean to `make clean`
