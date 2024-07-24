@@ -92,7 +92,7 @@ $(NODEJS_CACHE_PATH)/node-version: $(NODEJS_CACHE_PATH)
 	$(Q)echo $(NODEJS_VERSION) > $@
 
 # A target that will run node install only if lockfile was changed
-node_modules/.make-state: $(wildcard yarn.lock package-lock.json)
+node_modules/.make-state: $(wildcard yarn.lock package-lock.json pnpm-lock.yaml)
 	@$(call log,info,"[NodeJS] Ensure dependencies....",1)
 	$(Q)${NODEJS_INSTALL}
 	$(Q)${TOUCH} $@
