@@ -1,7 +1,8 @@
+POD := bundle exec pod
 POD_FILE ?= ios/Podfile
 POD_LOCKFILE ?= $(POD_FILE).lock
 POD_MANIFEST := $(dir $(POD_FILE))/Pods/Manifest.lock
-POD_INSTALL := cd $(dir $(POD_FILE)) && bundle exec pod install --repo-update
+POD_INSTALL := cd $(dir $(POD_FILE)) && $(POD) install --repo-update
 
 .PHONY: pod-setup
 pod-setup: ruby-dependencies
