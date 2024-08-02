@@ -19,9 +19,9 @@ setup.ci: setup.default
 #-------------
 # INSTALL
 #-------------
-.PHONY: install install.default install.local install.ci .install.pre .dependencies .install.post
-install: .workflow-run-dependencies ## Install project dependencies (force installation)
-install.default: .install.pre .dependencies .install.post
+.PHONY: install install.default install.local install.ci .install.pre .install .install.post
+install: .workflow-run-install ## Install project dependencies (force installation)
+install.default: .install.pre .install .install.post
 install.local: install.default
 install.ci: install.default
 .install.pre::
