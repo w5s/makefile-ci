@@ -64,6 +64,10 @@ ifneq ($(RUBY_ENABLED),)
 include $(SELF_DIR)src/ruby.mk
 endif
 
+ifneq ($(COCOAPODS_ENABLED),)
+include $(SELF_DIR)src/cocoapods.mk
+endif
+
 ifneq ($(SCALINGO_ENABLED),)
 include $(SELF_DIR)src/scalingo.mk
 endif
