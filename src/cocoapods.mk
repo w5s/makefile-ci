@@ -10,7 +10,7 @@ pod-setup: ruby-check-install
 pod-install: pod-setup
 	@$(call log,info,"[Pod] Install dependencies...",1)
 	$(Q)$(POD_INSTALL)
-.dependencies:: pod-install	# Add `pod install` to `make install`
+.install:: pod-install	# Add `pod install` to `make install`
 
 $(POD_MANIFEST): $(POD_LOCKFILE)
 	@$(call log,info,"[Pod] Ensure dependencies....",1)

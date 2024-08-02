@@ -17,10 +17,25 @@ setup.ci: setup.default
 	@:
 
 #-------------
+# INSTALL
+#-------------
+.PHONY: install install.default install.local install.ci .install.pre .dependencies .install.post
+install: .workflow-run-dependencies ## Install project dependencies (force installation)
+install.default: .install.pre .dependencies .install.post
+install.local: install.default
+install.ci: install.default
+.install.pre::
+	@:
+.install::
+	@:
+.install.post::
+	@:
+
+#-------------
 # DEPENDENCIES
 #-------------
 .PHONY: dependencies dependencies.default dependencies.local dependencies.ci .dependencies.pre .dependencies .dependencies.post
-dependencies: .workflow-run-dependencies ## Install project dependencies
+dependencies: .workflow-run-dependencies ## Ensure project dependencies are present (install only if needed)
 dependencies.default: .dependencies.pre .dependencies .dependencies.post
 dependencies.local: dependencies.default
 dependencies.ci: dependencies.default

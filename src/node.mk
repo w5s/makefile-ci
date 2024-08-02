@@ -133,7 +133,7 @@ endif
 node-install: node-setup
 	@$(call log,info,"[NodeJS] Install dependencies...",1)
 	$(Q)${NODEJS_INSTALL}
-.dependencies:: node-install	# Add `npm install` to `make install`
+.install:: node-install	# Add `npm install` to `make install`
 
 .PHONY: node-lint
 node-lint: node-check-install

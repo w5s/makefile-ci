@@ -104,7 +104,7 @@ ruby-check-install: ruby-setup
 ruby-install: ruby-setup
 	@$(call log,info,"[Ruby] Install dependencies....",1)
 	$(Q)${BUNDLE_INSTALL}
-.dependencies:: ruby-install # Add `bundle install` to `make install`
+.install:: ruby-install # Add `bundle install` to `make install`
 
 # Rubocop targets
 ifneq ($(RUBOCOP_ENABLED),)
