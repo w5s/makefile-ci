@@ -4,7 +4,7 @@ POD_MANIFEST := $(dir $(POD_FILE))/Pods/Manifest.lock
 POD_INSTALL := cd $(dir $(POD_FILE)) && bundle exec pod install --repo-update
 
 .PHONY: pod-setup
-pod-setup: ruby-check-install
+pod-setup: ruby-dependencies
 
 .PHONY: pod-install
 pod-install: pod-setup
@@ -18,5 +18,6 @@ $(POD_MANIFEST): $(POD_LOCKFILE)
 	$(Q)touch $(POD_MANIFEST)
 
 # Install dependencies only if needed
-.PHONY: pod-check-install
-pod-check-install: pod-setup $(POD_MANIFEST)
+.PHONY: pod-dependencies
+pod-dependencies: pod-setup $(POD_MANIFEST)
+.dependencies:: pod-dependencies

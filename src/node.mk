@@ -98,8 +98,9 @@ node_modules/.make-state: $(wildcard yarn.lock package-lock.json pnpm-lock.yaml)
 	$(Q)${TOUCH} $@
 
 # Install dependencies only if needed
-.PHONY: node-check-install
-node-check-install: node-setup node_modules/.make-state
+.PHONY: node-dependencies
+node-dependencies: node-setup node_modules/.make-state
+.dependencies:: node-dependencies
 
 .PHONY: node-setup
 node-setup: $(NODEJS_CACHE_PATH)/node-version
@@ -136,31 +137,31 @@ node-install: node-setup
 .install:: node-install	# Add `npm install` to `make install`
 
 .PHONY: node-lint
-node-lint: node-check-install
+node-lint: node-dependencies
 	@$(call log,info,"[NodeJS] Lint sources...",1)
 	$(Q)npm run lint --if-present
 .lint::	node-lint # Add `npm run lint` to `make lint`
 
 .PHONY: node-format
-node-format: node-check-install
+node-format: node-dependencies
 	@$(call log,info,"[NodeJS] Format sources...",1)
 	$(Q)npm run format --if-present
 .format:: node-format # Add `npm run test` to `make test`
 
 .PHONY: node-test
-node-test: node-check-install
+node-test: node-dependencies
 	@$(call log,info,"[NodeJS] Test sources...",1);
 	$(Q)npm run test
 .test:: node-test # Add npm test to `make test`
 
 .PHONY: node-test-e2e
-node-test-e2e: node-check-install
+node-test-e2e: node-dependencies
 	@$(call log,info,"[NodeJS] Test system...",1)
 	$(Q)npm run test:e2e
 .test-e2e:: node-test-e2e # Add rspec to `make test-e2e`
 
 .PHONY: node-clean
-node-clean: node-check-install
+node-clean: node-dependencies
 	@$(call log,info,"[NodeJS] Clean files...",1);
 	$(Q)npm run clean --if-present
 .clean:: node-clean # Add npm run clean to `make clean`

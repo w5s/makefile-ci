@@ -91,13 +91,14 @@ endif
 .setup:: ruby-setup # Add to `make setup`
 
 # bundle install only if needed
-.PHONY: ruby-check-install
-ruby-check-install: ruby-setup
+.PHONY: ruby-dependencies
+ruby-dependencies: ruby-setup
   # Test if
 	$(Q)if ! ${BUNDLE} check --dry-run > /dev/null 2>&1; then \
 		$(call log,info,"[Ruby] Ensure dependencies....",1); \
 		$(Q)${BUNDLE_INSTALL}; \
 	fi
+.dependencies:: ruby-dependencies
 
 # ruby-install
 .PHONY: ruby-install
@@ -110,13 +111,13 @@ ruby-install: ruby-setup
 ifneq ($(RUBOCOP_ENABLED),)
 
 .PHONY: ruby-lint
-ruby-lint: ruby-check-install
+ruby-lint: ruby-dependencies
 	@$(call log,info,"[Ruby] Lint sources...",1)
 	$(Q)${RUBOCOP}
 .lint:: ruby-lint # Add rubocop to `make lint`
 
 .PHONY: ruby-format
-ruby-format: ruby-check-install
+ruby-format: ruby-dependencies
 	@$(call log,info,"[Ruby] Format sources...",1)
 	$(Q)${RUBOCOP} -a
 .format:: ruby-format # Add rubocop to `make format`
@@ -127,14 +128,14 @@ endif
 ifneq ($(RUBYCRITIC_ENABLED),)
 
 .PHONY: ruby-critic
-ruby-critic: ruby-check-install
+ruby-critic: ruby-dependencies
 	@$(call log,info,"[Ruby] Rubycritic...",1)
 #   $(Q)$(GIT) fetch origin $(CI_DEFAULT_BRANCH):$(CI_DEFAULT_BRANCH)
 	$(Q)$(RUBYCRITIC) $(RUBYCRITIC_FLAGS)
 endif
 
 .PHONY: ruby-test
-ruby-test: ruby-check-install
+ruby-test: ruby-dependencies
 	@$(call log,info,"[Ruby] Test sources...",1)
 	$(Q)${RAKE} db:migrate || echo "Warning: Migration failed"
 	$(Q)${RAKE} spec
