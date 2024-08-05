@@ -80,7 +80,7 @@ clean.ci: clean.default
 # LINT
 #-------------
 .PHONY: lint lint.default lint.local lint.ci .lint.pre .lint .lint.post
-lint: .workflow-run-lint ## Lint all source files
+lint: dependencies .workflow-run-lint ## Lint all source files
 lint.default: .lint.pre .lint .lint.post
 lint.local: lint.default
 lint.ci: lint.default
@@ -95,7 +95,7 @@ lint.ci: lint.default
 # FORMAT
 #-------------
 .PHONY: format format.default format.local format.ci .format.pre .format .format.post
-format: .workflow-run-format ## Format all source files
+format: dependencies .workflow-run-format ## Format all source files
 format.default: .format.pre .format .format.post
 format.local: format.default
 format.ci: format.default
@@ -110,7 +110,7 @@ format.ci: format.default
 # TEST
 #-------------
 .PHONY: test test.default test.local test.ci .test.pre .test .test.post
-test: .workflow-run-test ## Run unit tests
+test: dependencies .workflow-run-test ## Run unit tests
 test.default: .test.pre .test .test.post
 test.local: test.default
 test.ci: test.default
@@ -125,7 +125,7 @@ test.ci: test.default
 # TEST SYSTEM (E2E)
 #-------------
 .PHONY: test-e2e test-e2e.default test-e2e.local test-e2e.ci .test-e2e.pre .test .test-e2e.post
-test-e2e: .workflow-run-test-e2e ## Run system tests (e2e)
+test-e2e: dependencies .workflow-run-test-e2e ## Run system tests (e2e)
 test-e2e.local: .test-e2e.pre .test-e2e .test-e2e.post
 test-e2e.ci: test-e2e.default
 .test-e2e.pre::
@@ -139,7 +139,7 @@ test-e2e.ci: test-e2e.default
 # DEVELOP
 #-------------
 .PHONY: develop develop.default develop.local develop.ci .develop.pre .develop .develop.post
-develop: .workflow-run-develop ## Setups a local development environment
+develop: dependencies .workflow-run-develop ## Setups a local development environment
 develop.local: .develop.pre .develop .develop.post
 develop.ci:
 	@$(call log,warn,"[Develop] Job disabled in CI mode",0)
