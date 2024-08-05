@@ -6,6 +6,10 @@ ifneq ($(wildcard .rubycritic.yml),)
 	RUBYCRITIC_ENABLED := true
 endif
 
+ifneq ($(wildcard rakefile Rakefile rakefile.rb Rakefile.rb),)
+	RAKE_ENABLED := true
+endif
+
 ## Ruby cache path (default: .cache/ruby)
 RUBY_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/ruby
 
@@ -136,7 +140,11 @@ endif
 
 .PHONY: ruby-test
 ruby-test: ruby-dependencies
-	@$(call log,info,"[Ruby] Test sources...",1)
-	$(Q)${RAKE} db:migrate || echo "Warning: Migration failed"
-	$(Q)${RAKE} spec
+ifneq ($(RAKE_ENABLED),)
+	@$(call log,info,"[Ruby] Test ...",1)
+	$(Q)$(RAKE) db:migrate || echo "Warning: Migration failed"
+	$(Q)$(RAKE) spec
+else
+	@$(call log,warn,"[Ruby] Test skipped",1)
+endif
 .test:: ruby-test # Add rspec to `make test`
