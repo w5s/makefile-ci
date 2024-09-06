@@ -161,7 +161,7 @@ DEPLOY_VARIABLES := \
 deploy: .workflow-run-deploy ## Deploy the application to the given environment
 deploy.default: .deploy.pre .deploy .deploy.post
 deploy.local: .deploy-check
-	$(Q)echo "WARNING! This will deploy local files"
+	$(Q)$(call log,warn,WARNING! This will deploy local files,1)
 	$(Q)read -r -p "Continue? [y/N]" REPLY;echo; \
 	if [[ "$$REPLY" =~ ^[Yy]$$ ]]; then \
 		$(MAKE) deploy.default; \
@@ -215,7 +215,7 @@ rescue.ci:
 # Reinstall after rescue
 .rescue.post::
 	@$(call log,info,"[Git] Clean all local changes...",1)
-	$(Q)echo "WARNING! This will remove all non commited git changes."
+	$(Q)$(call log,warn,WARNING! This will remove all non commited git changes.,1)
 	$(Q)read -r -p "Continue? [y/N]" REPLY;echo; \
 	if [[ "$$REPLY" =~ ^[Yy]$$ ]]; then \
 		$(GIT) clean -fdx; \
