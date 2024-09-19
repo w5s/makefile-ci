@@ -191,14 +191,15 @@ docker-release: ## Tag and push Docker Release image ($CONTAINER_RELEASE_IMAGE:$
 .PHONY: docker-rescue
 docker-rescue:
 	@$(call log,info,"[Docker] Clean all unused docker images...",1)
-	$(Q)docker image prune -a
+	@$(call log,warn,"[Docker] Disabled",1)
+#	$(Q)docker image prune -a
 .rescue:: docker-rescue
 
 # Generic target for building an image
 .PHONY: .docker-build
 .docker-build:
 	@$(call log,info,"[Docker] Building Image tag=$(DOCKER_BUILD_TAG) target=$(DOCKER_BUILD_TARGET)",1)
-	@docker buildx build\
+	$(Q)docker buildx build\
 		$(DOCKER_BUILD_ARGS)\
 		--target "$(DOCKER_BUILD_TARGET)" \
 		$(shell [[ -z "$(DOCKER_BUILD_PUSH)" ]] || echo --push) \
@@ -229,7 +230,7 @@ docker-rescue:
 .PHONY: .docker-run
 .docker-run:
 	@$(call log,info,"[Docker] Open container...",1)
-	@docker run\
+	$(Q)docker run\
 		$(DOCKER_RUN_ARGS) \
 		--rm \
 		--pull missing \
