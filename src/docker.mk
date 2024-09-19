@@ -191,7 +191,7 @@ docker-release: ## Tag and push Docker Release image ($CONTAINER_RELEASE_IMAGE:$
 .PHONY: docker-rescue
 docker-rescue:
 	@$(call log,info,"[Docker] Clean all unused docker images...",1)
-	@$(call log,warn,"[Docker] Disabled",1)
+	@$(call log,warn,"[Docker] NotImplemented",1)
 #	$(Q)docker image prune -a
 .rescue:: docker-rescue
 
