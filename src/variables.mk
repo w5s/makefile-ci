@@ -210,9 +210,9 @@ CI_VARIABLES += CI_APPLICATION_TAG
 CI_BUILD_TYPE ?=
 ifeq ($(CI_BUILD_TYPE),)
 	ifneq ($(CI),)
-		CI_BUILD_TYPE = debug
-	else
 		CI_BUILD_TYPE = release
+	else
+		CI_BUILD_TYPE = debug
 	endif
 endif
 export CI_BUILD_TYPE
