@@ -213,14 +213,14 @@ rescue.ci:
 	@:
 
 # Reinstall after rescue
-.rescue.post::
+.rescue.pre::
 	@$(call log,info,"[Git] Clean all local changes...",1)
 	$(Q)$(call log,warn,WARNING! This will remove all non commited git changes.,1)
 	$(Q)read -r -p "Continue? [y/N]" REPLY;echo; \
 	if [[ "$$REPLY" =~ ^[Yy]$$ ]]; then \
 		$(GIT) clean -fdx; \
 	fi
-.rescue.post:: prepare dependencies
+.rescue.post:: dependencies
 
 # This job will run
 .PHONY: .workflow-run-%
