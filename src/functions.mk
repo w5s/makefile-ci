@@ -52,3 +52,33 @@ define panic
 	$(call log,fatal,$(1))
 	exit 1
 endef
+
+# Lower-case a string value.
+#
+# @param $(1) - The string to lower-case.
+#
+# @example
+# 	$(call lowercase,HeLlO wOrLd) # "hello world"
+lowercase = $(shell echo $(call escape-shell,$(1)) | tr '[:upper:]' '[:lower:]')
+
+# Determine the "truthiness" of a value.
+#
+# @param $(1): The value to determine the truthiness of.
+#
+# A value is considered to be falsy if it is:
+#
+#   - empty, or
+#   - equal to "0", "N", "NO", "F" or "FALSE" after upper-casing.
+#
+# If the value is truthy then the value is returned as-is, otherwise no value
+# is returned.
+#
+# @example
+#
+#     truthy := y
+#     truthy-flag := $(call filter-false,$(truthy)) # "y"
+#
+#     falsy := n
+#     falsy-flag := $(call filter-false,$(falsy)) # <empty>
+#
+filter-false = $(filter-out 0 n no f false,$(call lowercase,$(1)))
