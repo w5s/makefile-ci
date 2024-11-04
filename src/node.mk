@@ -49,37 +49,37 @@ export NODEJS_VERSION
 # Define install command
 ifeq ($(NODEJS_PACKAGE_MANAGER),yarn-berry)
 # Yarn berry
-	ifeq ($(CI),)
-		NODEJS_INSTALL = yarn install
-	else
+	ifneq ($(call filter-false,$(CI)),)
 		NODEJS_INSTALL = yarn install --immutable
 		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
 		YARN_ENABLE_GLOBAL_CACHE ?= false
+	else
+		NODEJS_INSTALL = yarn install
 	endif
 else ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
 # Yarn
-	ifeq ($(CI),)
-		NODEJS_INSTALL = yarn install
-	else
+	ifneq ($(call filter-false,$(CI)),)
 		NODEJS_INSTALL = yarn install --frozen-file
 		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
 		YARN_ENABLE_GLOBAL_CACHE ?= false
+	else
+		NODEJS_INSTALL = yarn install
 	endif
 else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
 # PNPM
-	ifeq ($(CI),)
-		NODEJS_INSTALL = pnpm install
-	else
+	ifneq ($(call filter-false,$(CI)),)
 		NODEJS_INSTALL = pnpm install --frozen-file
 		PNPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/pnpm
+	else
+		NODEJS_INSTALL = pnpm install
 	endif
 else
 # NPM should be used
-	ifeq ($(CI),)
-		NODEJS_INSTALL = npm install
-	else
+	ifneq ($(call filter-false,$(CI)),)
 		NODEJS_INSTALL = npm ci
 		NPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/npm
+	else
+		NODEJS_INSTALL = npm install
 	endif
 endif
 

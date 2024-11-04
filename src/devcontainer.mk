@@ -2,10 +2,10 @@
 DEVCONTAINER := devcontainer
 
 ifneq ($(wildcard .devcontainer),)
-	DEVCONTAINER_ENABLED := true
+	DEVCONTAINER_ENABLED ?= true
 endif
 
-ifneq ($(DEVCONTAINER_ENABLED),)
+ifneq ($(call filter-false,$(DEVCONTAINER_ENABLED)),)
 ## DevContainer flags added for each command
 DEVCONTAINER_FLAGS ?= --workspace-folder .
 

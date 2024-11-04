@@ -45,9 +45,7 @@ RUBYCRITIC := ${BUNDLE} exec rubycritic
 # RUBYCRITIC_FLAGS :=
 RAKE := ${BUNDLE} exec rake
 
-ifeq ($(CI),)
-# do nothing
-else
+ifneq ($(call filter-false,$(CI)),)
 	BUNDLE_FROZEN ?= true
 	BUNDLE_PATH ?= ${PROJECT_VENDOR_PATH}/bundle
 	RUBYCRITIC_FLAGS += --mode-ci
@@ -112,7 +110,7 @@ ruby-install: ruby-setup
 .install:: ruby-install # Add `bundle install` to `make install`
 
 # Rubocop targets
-ifneq ($(RUBOCOP_ENABLED),)
+ifneq ($(call filter-false,$(RUBOCOP_ENABLED)),)
 
 .PHONY: ruby-lint
 ruby-lint: ruby-dependencies
@@ -129,7 +127,7 @@ ruby-format: ruby-dependencies
 endif
 
 # RubyCritic targets
-ifneq ($(RUBYCRITIC_ENABLED),)
+ifneq ($(call filter-false,$(RUBYCRITIC_ENABLED)),)
 
 .PHONY: ruby-critic
 ruby-critic: ruby-dependencies
@@ -140,7 +138,7 @@ endif
 
 .PHONY: ruby-test
 ruby-test: ruby-dependencies
-ifneq ($(RAKE_ENABLED),)
+ifneq ($(call filter-false,$(RAKE_ENABLED)),)
 	@$(call log,info,"[Ruby] Test ...",1)
 	$(Q)$(RAKE) db:migrate || echo "Warning: Migration failed"
 	$(Q)$(RAKE) spec

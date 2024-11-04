@@ -22,7 +22,7 @@ export DOCKER_BUILD_PLATFORMS
 ## Enable Docker push when building
 DOCKER_BUILD_PUSH ?=
 ifeq ($(DOCKER_BUILD_PUSH),)
-	ifneq ($(CI),)
+	ifneq ($(call filter-false,$(CI)),)
 # Enable DOCKER_BUILD_PUSH by default when CI is set
 		DOCKER_BUILD_PUSH = 1
 	endif
@@ -40,7 +40,7 @@ CONTAINER_DEV_TARGET ?= dev-envs
 ## Containerdev envs image tag  (for CI)
 CONTAINER_DEV_TAG ?=
 ifeq ($(CONTAINER_DEV_TAG),)
-	ifneq ($(CI),)
+	ifneq ($(call filter-false,$(CI)),)
 		CONTAINER_DEV_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_DEV_TARGET)
 	else
 		CONTAINER_DEV_TAG = local--$(CONTAINER_DEV_TARGET)
@@ -54,7 +54,7 @@ CONTAINER_BUILDER_TARGET ?= builder
 ## Container builder image tag  (for CI)
 CONTAINER_BUILDER_TAG ?=
 ifeq ($(CONTAINER_BUILDER_TAG),)
-	ifneq ($(CI),)
+	ifneq ($(call filter-false,$(CI)),)
 		CONTAINER_BUILDER_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_BUILDER_TARGET)
 	else
 		CONTAINER_BUILDER_TAG = local--$(CONTAINER_BUILDER_TARGET)
@@ -68,7 +68,7 @@ CONTAINER_RUNNER_TARGET ?= runner
 ## Container runner image tag (for server)
 CONTAINER_RUNNER_TAG ?=
 ifeq ($(CONTAINER_RUNNER_TAG),)
-	ifneq ($(CI),)
+	ifneq ($(call filter-false,$(CI)),)
 		CONTAINER_RUNNER_TAG = $(CI_COMMIT_REF_SLUG)-$(CI_COMMIT_SHORT_SHA)--$(CONTAINER_RUNNER_TARGET)
 	else
 		CONTAINER_RUNNER_TAG = local--$(CONTAINER_RUNNER_TARGET)

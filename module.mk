@@ -26,10 +26,10 @@ RUBY_ENABLED ?= true
 endif
 
 ## Enable Scalingo deployment
-SCALINGO_ENABLED ?=
+SCALINGO_ENABLED ?= false
 
 ## Enable Heroku deployment
-HEROKU_ENABLED ?=
+HEROKU_ENABLED ?= false
 
 # Include variables
 include $(SELF_DIR)src/functions.mk
@@ -45,33 +45,33 @@ include $(SELF_DIR)src/template.mk
 include $(SELF_DIR)src/dotenv.mk
 include $(SELF_DIR)src/cache.mk
 
-ifneq ($(DOCKER_ENABLED),)
+ifneq ($(call filter-false,$(DOCKER_ENABLED)),)
 include $(SELF_DIR)src/docker.mk
 include $(SELF_DIR)src/docker-compose.mk
 endif
 
-ifneq ($(DEVCONTAINER_ENABLED),)
+ifneq ($(call filter-false,$(DEVCONTAINER_ENABLED)),)
 include $(SELF_DIR)src/devcontainer.mk
 endif
 
 include $(SELF_DIR)src/githooks.mk
 
-ifneq ($(NODEJS_ENABLED),)
+ifneq ($(call filter-false,$(NODEJS_ENABLED)),)
 include $(SELF_DIR)src/node.mk
 endif
 
-ifneq ($(RUBY_ENABLED),)
+ifneq ($(call filter-false,$(RUBY_ENABLED)),)
 include $(SELF_DIR)src/ruby.mk
 endif
 
-ifneq ($(COCOAPODS_ENABLED),)
+ifneq ($(call filter-false,$(COCOAPODS_ENABLED)),)
 include $(SELF_DIR)src/cocoapods.mk
 endif
 
-ifneq ($(SCALINGO_ENABLED),)
+ifneq ($(call filter-false,$(SCALINGO_ENABLED)),)
 include $(SELF_DIR)src/scalingo.mk
 endif
 
-ifneq ($(HEROKU_ENABLED),)
+ifneq ($(call filter-false,$(HEROKU_ENABLED)),)
 include $(SELF_DIR)src/heroku.mk
 endif

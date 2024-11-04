@@ -224,7 +224,7 @@ rescue.ci:
 
 # This job will run
 .PHONY: .workflow-run-%
-ifneq ($(CI),)
+ifneq ($(call filter-false,$(CI)),)
 .workflow-run-%:
 	@$(call log,info,"[Make] $* \(mode=CI\)")
 	@${MAKE} $*.ci

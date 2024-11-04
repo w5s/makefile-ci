@@ -119,7 +119,9 @@ CI_VARIABLES += CI_JOB_STARTED_AT
 ## The name of the environment for this job
 CI_ENVIRONMENT_NAME ?=
 ifeq ($(CI_ENVIRONMENT_NAME),)
-	ifeq ($(CI),)
+	ifneq ($(call filter-false,$(CI)),)
+# Do nothing
+	else
 		CI_ENVIRONMENT_NAME = local
 	endif
 endif
@@ -209,7 +211,7 @@ CI_VARIABLES += CI_APPLICATION_TAG
 ## Type of build (release/debug)
 CI_BUILD_TYPE ?=
 ifeq ($(CI_BUILD_TYPE),)
-	ifneq ($(CI),)
+	ifneq ($(call filter-false,$(CI)),)
 		CI_BUILD_TYPE = release
 	else
 		CI_BUILD_TYPE = debug
