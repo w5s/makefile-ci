@@ -14,6 +14,17 @@ SCALINGO_APP ?= $(SCALINGO_APP_PREFIX)$(SCALINGO_APP_SUFFIX)
 # Register variables to be displayed before deployment
 DEPLOY_VARIABLES += SCALINGO_APP SCALINGO_REGION
 
+.PHONY: scalingo-setup
+scalingo-setup:
+	$(Q)command -v scalingo >/dev/null 2>&1 || { \
+		$(call log,info,"[Scalingo] Install CLI...",1); \
+		if command -v brew >/dev/null 2>&1; then \
+			brew install scalingo; \
+		else \
+			curl -O https://cli-dl.scalingo.com/install && bash install; \
+		fi \
+	}
+
 .PHONY: scalingo-archive
 scalingo-archive:
 	@$(call log,info,"[Scalingo] Bundle $(SCALINGO_APP)...",1)
@@ -28,7 +39,7 @@ scalingo-clean:
 .clean:: scalingo-clean
 
 .PHONY: scalingo-deploy
-scalingo-deploy: scalingo-archive
+scalingo-deploy: scalingo-setup scalingo-archive
 	@$(call log,info,"[Scalingo] Deploy $(SCALINGO_APP)...",1)
 	$(Q)$(SCALINGO) --app $(SCALINGO_APP) --region=$(SCALINGO_REGION) deploy ${SCALINGO_ARCHIVE_FILE}
 .deploy::scalingo-deploy
