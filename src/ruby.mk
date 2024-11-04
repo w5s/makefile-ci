@@ -47,7 +47,7 @@ RAKE := ${BUNDLE} exec rake
 
 ifneq ($(call filter-false,$(CI)),)
 	BUNDLE_FROZEN ?= true
-	BUNDLE_PATH ?= ${PROJECT_VENDOR_PATH}/bundle
+	BUNDLE_PATH ?= vendor/bundle
 	RUBYCRITIC_FLAGS += --mode-ci
 endif
 

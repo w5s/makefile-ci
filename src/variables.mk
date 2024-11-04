@@ -28,14 +28,6 @@ MAKEFILE_CI_TEMPLATE_PATH := $(MAKEFILE_CI_PATH)/template
 PROJECT_PATH ?= $(CURDIR)
 ## Project cache path
 PROJECT_CACHE_PATH ?= .cache
-## Project documentation path
-PROJECT_DOCS_PATH ?= docs
-## Project script path
-PROJECT_SCRIPT_PATH ?= scripts
-## External library path
-PROJECT_VENDOR_PATH ?= vendor
-## Git hooks directory (pre-commit, pre-push, etc)
-PROJECT_GITHOOKS_PATH ?= .githooks
 
 
 # Continuous Integration
