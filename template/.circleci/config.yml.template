@@ -69,7 +69,7 @@ commands:
       - restore_cache:
           name: Restore ASDF Cache
           keys:
-            - v1-{{checksum ".circleci/config.yml"}}-asdf-{{ checksum "/tmp/asdf-project-tool-versions" }}
+            - v1-{{checksum ".circleci/config.yml"}}-{{ arch }}-asdf-{{ checksum "/tmp/asdf-project-tool-versions" }}
       - run:
           name: ASDF install plugins
           command: |
@@ -87,7 +87,7 @@ commands:
     steps:
       - save_cache:
           name: Save ASDF Cache
-          key: v1-{{checksum ".circleci/config.yml"}}-asdf-{{ checksum "/tmp/asdf-project-tool-versions" }}
+          key: v1-{{checksum ".circleci/config.yml"}}-{{ arch }}-asdf-{{ checksum "/tmp/asdf-project-tool-versions" }}
           paths:
             - .cache/asdf
 
@@ -97,15 +97,15 @@ commands:
       - restore_cache:
           name: Restore NodeJS Download Cache
           keys:
-            - v1-{{checksum ".circleci/config.yml"}}-node-dl-{{ checksum "/tmp/node-project-lockfile" }}
+            - v1-{{checksum ".circleci/config.yml"}}-{{ arch }}-node-dl-{{ checksum "/tmp/node-project-lockfile" }}
       - restore_cache:
           name: Restore NodeJS Cache
           keys:
-            - v1-{{checksum ".circleci/config.yml"}}-node-{{ checksum "/tmp/node-project-lockfile" }}
+            - v1-{{checksum ".circleci/config.yml"}}-{{ arch }}-node-{{ checksum "/tmp/node-project-lockfile" }}
       - restore_cache:
           name: Restore Bundle Cache
           keys:
-            - v1-{{checksum ".circleci/config.yml"}}-bundle-{{ checksum "/tmp/ruby-project-lockfile" }}
+            - v1-{{checksum ".circleci/config.yml"}}-{{ arch }}-bundle-{{ checksum "/tmp/ruby-project-lockfile" }}
       - run:
           command: make self-install
   save_deps:
@@ -113,19 +113,19 @@ commands:
     steps:
       - save_cache:
           name: Save NodeJS Download Cache
-          key: v1-{{checksum ".circleci/config.yml"}}-node-dl-{{ checksum "/tmp/node-project-lockfile" }}
+          key: v1-{{checksum ".circleci/config.yml"}}-{{ arch }}-node-dl-{{ checksum "/tmp/node-project-lockfile" }}
           paths:
             - .cache/yarn
             #            - .cache/cypress
             - .yarn/unplugged
       - save_cache:
           name: Save NodeJS Cache
-          key: v1-{{checksum ".circleci/config.yml"}}-node-{{ checksum "/tmp/node-project-lockfile" }}
+          key: v1-{{checksum ".circleci/config.yml"}}-{{ arch }}-node-{{ checksum "/tmp/node-project-lockfile" }}
           paths:
             - node_modules
       - save_cache:
           name: Save Bundle Cache
-          key: v1-{{checksum ".circleci/config.yml"}}-bundle-{{ checksum "/tmp/ruby-project-lockfile" }}
+          key: v1-{{checksum ".circleci/config.yml"}}-{{ arch }}-bundle-{{ checksum "/tmp/ruby-project-lockfile" }}
           paths:
             - vendor/bundle
   before_job:
