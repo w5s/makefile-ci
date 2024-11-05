@@ -14,8 +14,8 @@ SCALINGO_APP ?= $(SCALINGO_APP_PREFIX)$(SCALINGO_APP_SUFFIX)
 # Register variables to be displayed before deployment
 DEPLOY_VARIABLES += SCALINGO_APP SCALINGO_REGION
 
-.PHONY: scalingo-setup
-scalingo-setup:
+# Fake target to setup scalingo
+$(MAKE_CACHE_PATH)/job/scalingo-setup: $(MAKE_CACHE_PATH)
 	$(Q)command -v scalingo >/dev/null 2>&1 || { \
 		$(call log,info,"[Scalingo] Install CLI...",1); \
 		if command -v brew >/dev/null 2>&1; then \
@@ -24,6 +24,9 @@ scalingo-setup:
 			curl -O https://cli-dl.scalingo.com/install && bash install; \
 		fi \
 	}
+
+.PHONY: scalingo-setup
+scalingo-setup: $(MAKE_CACHE_PATH)/job/scalingo-setup
 
 .PHONY: scalingo-archive
 scalingo-archive:
