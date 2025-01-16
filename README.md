@@ -33,6 +33,7 @@ As a result, the developer only has to learn a restricted set of command (ex: `m
     - CircleCI
 - 🚀 Deploy target
   - Scalingo
+  - Heroku
   - (More coming)
 
 ## Getting started
