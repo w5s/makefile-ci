@@ -53,6 +53,14 @@ define panic
 	exit 1
 endef
 
+# Slugify a string value.
+#
+# @param $(1) - The string to slugify
+#
+# @example
+# 	$(call slugify,HeLlO wOrLd) # "hello-world"
+slugify = $(shell echo $(call escape-shell,$(1)) | tr '[:upper:]' '[:lower:]' | tr '[:punct:]' '-' | tr ' ' '-' )
+
 # Lower-case a string value.
 #
 # @param $(1) - The string to lower-case.
