@@ -67,7 +67,11 @@ ${BUNDLE_CACHE_PATH}:
 ${BUNDLE_PATH}: ${BUNDLE_CACHE_PATH}
 	@[ ! -z "${BUNDLE_PATH}" ] && ${MKDIRP} "${BUNDLE_PATH}"
 
-# ruby-setup
+#
+# Setup Ruby
+#
+# This will install Ruby using $(RUBY_VERSION_MANAGER)
+#
 .PHONY: ruby-setup
 ruby-setup: $(RUBY_CACHE_PATH)/ruby-version
 
@@ -95,7 +99,9 @@ endif
 endif
 .setup:: ruby-setup # Add to `make setup`
 
-# bundle install only if needed
+#
+# Install ruby gem dependencies (bundle install) only if needed
+#
 .PHONY: ruby-dependencies
 ruby-dependencies: ruby-setup
   # Test if
@@ -105,7 +111,9 @@ ruby-dependencies: ruby-setup
 	fi
 .dependencies:: ruby-dependencies
 
-# ruby-install
+#
+# Force install ruby gem dependencies (bundle install)
+#
 .PHONY: ruby-install
 ruby-install: ruby-setup
 	@$(call log,info,"[Ruby] Install dependencies....",1)
@@ -115,12 +123,18 @@ ruby-install: ruby-setup
 # Rubocop targets
 ifneq ($(call filter-false,$(RUBOCOP_ENABLED)),)
 
+#
+# Lint ruby source code (using rubocop)
+#
 .PHONY: ruby-lint
 ruby-lint: ruby-dependencies
 	@$(call log,info,"[Ruby] Lint sources...",1)
 	$(Q)${RUBOCOP}
 .lint:: ruby-lint # Add rubocop to `make lint`
 
+#
+# Format ruby source code (using rubocop)
+#
 .PHONY: ruby-format
 ruby-format: ruby-dependencies
 	@$(call log,info,"[Ruby] Format sources...",1)
@@ -132,6 +146,9 @@ endif
 # RubyCritic targets
 ifneq ($(call filter-false,$(RUBYCRITIC_ENABLED)),)
 
+#
+# Audit code using rubycritic
+#
 .PHONY: ruby-critic
 ruby-critic: ruby-dependencies
 	@$(call log,info,"[Ruby] Rubycritic...",1)
@@ -139,6 +156,9 @@ ruby-critic: ruby-dependencies
 	$(Q)$(RUBYCRITIC) $(RUBYCRITIC_FLAGS)
 endif
 
+#
+# Run unit tests
+#
 .PHONY: ruby-test
 ruby-test: ruby-dependencies
 ifneq ($(call filter-false,$(RAKE_ENABLED)),)
