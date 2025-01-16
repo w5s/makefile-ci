@@ -130,12 +130,12 @@ CI_PROJECT_URL ?= $(basename $(shell echo "$(shell ${GIT} remote get-url origin)
 export CI_PROJECT_URL
 CI_VARIABLES += CI_PROJECT_URL
 
-## The HTTP(S) address of the project.
+## The project name
 CI_PROJECT_NAME ?= $(basename $(notdir $(shell ${GIT} remote get-url origin)))
 export CI_PROJECT_NAME
 CI_VARIABLES += CI_PROJECT_NAME
 
-## The project namespace (username or group name) of the job.
+## The project namespace (username or group name).
 CI_PROJECT_NAMESPACE ?= $(shell echo $(CI_PROJECT_URL) | sed -r 's|^https?://||' | cut -d '/' -f2- | xargs dirname)
 export CI_PROJECT_NAMESPACE
 CI_VARIABLES += CI_PROJECT_NAMESPACE
