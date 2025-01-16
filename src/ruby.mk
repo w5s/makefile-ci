@@ -79,6 +79,9 @@ else ifneq ($(shell ruby -v | awk '{ print $$2 }'),$(RUBY_VERSION))
 ifeq ($(RUBY_VERSION_MANAGER),asdf)
 	$(Q)$(ASDF) plugin add ruby
 	$(Q)$(ASDF) install ruby $(RUBY_VERSION)
+else ifeq ($(RUBY_VERSION_MANAGER),rvm)
+	$(Q)rvm install $(RUBY_VERSION)
+	$(Q)rvm use $(RUBY_VERSION) --default
 else
 	@$(call panic,[Ruby] Unsupported ruby version manager $(RUBY_VERSION_MANAGER))
 endif
