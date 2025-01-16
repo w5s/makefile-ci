@@ -32,9 +32,15 @@ $(MAKE_CACHE_PATH)/job/heroku-setup: $(MAKE_CACHE_PATH)
 		fi \
 	}
 
+#
+# Install heroku cli if not present
+#
 .PHONY: heroku-setup
 heroku-setup: $(MAKE_CACHE_PATH)/job/heroku-setup
 
+#
+# Login to heroku (will open a browser)
+#
 .PHONY: heroku-login
 heroku-login: heroku-setup
 ifneq ($(HEROKU_API_KEY),)
@@ -43,6 +49,9 @@ else
 	$(Q):
 endif
 
+#
+# Deploy to heroku
+#
 .PHONY: heroku-deploy
 heroku-deploy: heroku-setup heroku-login
 	@$(call log,info,"[Heroku] Deploy $(HEROKU_APP)...",1)

@@ -25,15 +25,24 @@ $(MAKE_CACHE_PATH)/job/scalingo-setup: $(MAKE_CACHE_PATH)
 		fi \
 	}
 
+#
+# Install scalingo cli if not present
+#
 .PHONY: scalingo-setup
 scalingo-setup: $(MAKE_CACHE_PATH)/job/scalingo-setup
 
+#
+# Create a tarball of the app, to be deployed in scalingo
+#
 .PHONY: scalingo-archive
 scalingo-archive:
 	@$(call log,info,"[Scalingo] Bundle $(SCALINGO_APP)...",1)
 	$(Q)$(MKDIRP) $(dir $(SCALINGO_ARCHIVE_FILE))
 	$(Q)$(GIT) archive --prefix=master/ HEAD | gzip > ${SCALINGO_ARCHIVE_FILE}
 
+#
+# Clean scalingo cache (deploy archives)
+#
 .PHONY: scalingo-clean
 scalingo-clean:
 	@$(call log,info,"[Scalingo] Clean cache...",1)
@@ -41,6 +50,11 @@ scalingo-clean:
 	$(Q)$(RM) -rf $(SCALINGO_CACHE_PATH)
 .clean:: scalingo-clean
 
+#
+# Deploy app archive to Scalingo
+#
+# This method is better than git push because it exits with non zero code on failure
+#
 .PHONY: scalingo-deploy
 scalingo-deploy: scalingo-setup scalingo-archive
 	@$(call log,info,"[Scalingo] Deploy $(SCALINGO_APP)...",1)
