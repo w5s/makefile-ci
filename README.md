@@ -70,8 +70,11 @@ To change configuration, edit the file :
 Minimal recommended configuration
 
 ```make
-# Project name will be used for app name in deployment, and docker image names, etc.
-CI_PROJECT_NAME ?= my-project # ex: la-compagnie-des-familles-application, vesta
+# Project name will be used for app name in deployment, and docker image names, etc (ex: vesta)
+export CI_PROJECT_NAME ?=
+
+# Project namespace (ex: Captive-Studio)
+export CI_PROJECT_NAMESPACE ?=
 ```
 
 ### 3. CI configuration
