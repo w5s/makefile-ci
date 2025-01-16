@@ -49,6 +49,7 @@ export NODEJS_VERSION
 # Define install command
 ifeq ($(NODEJS_PACKAGE_MANAGER),yarn-berry)
 # Yarn berry
+	NODEJS_RUN := yarn run
 	ifneq ($(call filter-false,$(CI)),)
 		NODEJS_INSTALL = yarn install --immutable
 		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
@@ -58,6 +59,7 @@ ifeq ($(NODEJS_PACKAGE_MANAGER),yarn-berry)
 	endif
 else ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
 # Yarn
+	NODEJS_RUN := yarn run
 	ifneq ($(call filter-false,$(CI)),)
 		NODEJS_INSTALL = yarn install --frozen-file
 		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
@@ -67,6 +69,7 @@ else ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
 	endif
 else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
 # PNPM
+	NODEJS_RUN := pnpm run
 	ifneq ($(call filter-false,$(CI)),)
 		NODEJS_INSTALL = pnpm install --frozen-file
 		PNPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/pnpm
@@ -75,6 +78,7 @@ else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
 	endif
 else
 # NPM should be used
+	NODEJS_RUN := npm run
 	ifneq ($(call filter-false,$(CI)),)
 		NODEJS_INSTALL = npm ci
 		NPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/npm
@@ -152,7 +156,7 @@ node-install: node-setup
 .PHONY: node-lint
 node-lint: node-dependencies
 	@$(call log,info,"[NodeJS] Lint sources...",1)
-	$(Q)npm run lint --if-present
+	$(Q)$(NODEJS_RUN) lint --if-present
 .lint::	node-lint # Add `npm run lint` to `make lint`
 
 #
@@ -161,7 +165,7 @@ node-lint: node-dependencies
 .PHONY: node-format
 node-format: node-dependencies
 	@$(call log,info,"[NodeJS] Format sources...",1)
-	$(Q)npm run format --if-present
+	$(Q)$(NODEJS_RUN) format --if-present
 .format:: node-format # Add `npm run test` to `make test`
 
 #
@@ -170,7 +174,7 @@ node-format: node-dependencies
 .PHONY: node-test
 node-test: node-dependencies
 	@$(call log,info,"[NodeJS] Test sources...",1);
-	$(Q)npm run test
+	$(Q)$(NODEJS_RUN) test
 .test:: node-test # Add npm test to `make test`
 
 #
@@ -179,7 +183,7 @@ node-test: node-dependencies
 .PHONY: node-test-e2e
 node-test-e2e: node-dependencies
 	@$(call log,info,"[NodeJS] Test system...",1)
-	$(Q)npm run test:e2e
+	$(Q)$(NODEJS_RUN) test:e2e
 .test-e2e:: node-test-e2e # Add rspec to `make test-e2e`
 
 #
@@ -188,5 +192,5 @@ node-test-e2e: node-dependencies
 .PHONY: node-clean
 node-clean: node-dependencies
 	@$(call log,info,"[NodeJS] Clean files...",1);
-	$(Q)npm run clean --if-present
+	$(Q)$(NODEJS_RUN) clean --if-present
 .clean:: node-clean # Add npm run clean to `make clean`
