@@ -174,7 +174,7 @@ deploy.ci: .deploy-check
 	@$(call log,info,CI_PROJECT_NAME=$(CI_PROJECT_NAME),1);
 # Check CI_ENVIRONMENT_NAME
 ifeq ($(CI_ENVIRONMENT_NAME),local)
-	@$(call log,error,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME) (deployment is forbidden for environment named "local"),1);
+	@$(call log,error,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME) (forbidden value, use CI_ENVIRONMENT_NAME=<environment> make deploy),1);
 else
 	@$(call log,info,CI_ENVIRONMENT_NAME=$(CI_ENVIRONMENT_NAME),1);
 endif
