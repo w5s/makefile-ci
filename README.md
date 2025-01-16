@@ -10,7 +10,7 @@ This package provides a collection of makefiles that should be included in a pro
 
 These makefiles are designed to _standardize_ and _simplify_ the workflow to `build`, `run` and `deploy` the project.
 
-As a result, the developer only has to learn a restricted set of command (ex: `make help`, `make build`, `make test`) to manipulate the project without the need to know about the underlying stack.
+As a result, the developer only has to learn a small set of command (ex: `make help`, `make build`, `make test`) to manipulate the project without the need to know about the underlying stack.
 
 ## Features
 
@@ -20,7 +20,7 @@ As a result, the developer only has to learn a restricted set of command (ex: `m
   - ✓ Everything should be overridable in `config.mk` or `Makefile` if needed
 - 💡 Use simple `make` targets for better productivity
   - Generic target will run the equivalent task in every language used by the project (ex: `make lint` will run `npm run lint`, `bundle exec rubocop`, etc)
-  - No more "I forgot to do `bundle install`, `asdf install`, etc", `make` will do it for you in a performant way 
+  - No more "I forgot to do `bundle install`, `asdf install`, etc", `make` will do it for you in a performant way
 - 💻 Support local and CI environment (with `CI` environment variable)
 - 👍 Supported technologies :
   - ✓ NodeJS
@@ -60,12 +60,18 @@ make self-add url=https://github.com/Captive-Studio/makefile-ci
 make help
 ```
 
-### 2. Make configuration
+### 2. Configuration
 
-`<project_root>/config.mk`
+To change configuration, edit the file :
+
+- `<project_root>/config.mk`: for shared settings for everyone
+- `<project_root>/local.mk`: for local personal settings (this file should not be versioned)
+
+Minimal recommended configuration
+
 ```make
-# Put here variables
-SCALINGO_APP_PREFIX ?= my-special-prefix-
+# Project name will be used for app name in deployment, and docker image names, etc.
+CI_PROJECT_NAME ?= my-project # ex: la-compagnie-des-familles-application, vesta
 ```
 
 ### 3. CI configuration
@@ -78,28 +84,67 @@ make .circleci/config.yml
 
 ## Usage
 
-### `make help` : Display all targets and variables
+### Bootstrap / Update repository
+
+#### `make self-install` : Install makefile-ci
+
+> [!IMPORTANT]
+> This command is required just after `git clone` any project using makefile-ci
+
+#### `make self-update` : Update makefile-ci
+
+> [!IMPORTANT]
+> Do not forget to commit changes
+
+```shell
+# This will checkout makefile-ci in .modules/
+make self-install
+```
+
+### Help / Debug
+
+#### `make help` : Display all targets and variables
 
 ```shell
 make help
 ```
 
-### `make print-variables` : Display all variables and their value
+#### `make print-variables` : Display all variables and their value
 
 ```shell
 make print-variables
 ```
 
-### `CI=1 make {{target}}` : Run in CI mode locally (for debugging)
+#### `CI=1 make {{target}}` : Run in CI mode locally (for debugging)
 
 To toggle mode use `CI` environment variable. This variable is already set in most CI provider (CircleCI, GitlabCI, etc).
 As a consequence `make {{target}}` will automatically change mode when launched in local or in CI environment.
 
 Nevertheless it possible to run locally in CI mode :
 
+> [!WARNING]  
+> Can be useful to debug problems on CI, never use it on a daily basis !
+
 ```shell
-# WARNING : recommended for debugging purpose only
 CI=1 make lint
+```
+
+### Deploy
+
+#### `make deploy` : Deploy to an environment
+
+> [!WARNING]  
+> Make sure to have enabled at least one cloud provider 
+>
+> Example in `config.mk` to enable scalingo :
+>
+> ```make
+> SCALINGO_ENABLED ?= true 
+> ```
+
+```shell
+# Example : this will deploy to staging
+CI_ENVIRONMENT_NAME=staging make deploy
 ```
 
 ## Contributing
