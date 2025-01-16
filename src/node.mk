@@ -46,44 +46,72 @@ ifeq ($(NODEJS_VERSION),)
 endif
 export NODEJS_VERSION
 
-# Define install command
+## NodeJS install frozen (default: true in CI mode, false else)
+NODEJS_FROZEN ?=
+ifeq ($(NODEJS_FROZEN),)
+	ifneq ($(call filter-false,$(CI)),)
+		NODEJS_FROZEN := true
+	else
+		NODEJS_FROZEN := false
+	endif
+endif
+
+#
+# Define package manager settings
+#
 ifeq ($(NODEJS_PACKAGE_MANAGER),yarn-berry)
 # Yarn berry
 	NODEJS_RUN := yarn run
-	ifneq ($(call filter-false,$(CI)),)
+# Yarn berry frozen mode
+	ifneq ($(call filter-false,$(NODEJS_FROZEN)),)
 		NODEJS_INSTALL = yarn install --immutable
-		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
-		YARN_ENABLE_GLOBAL_CACHE ?= false
 	else
 		NODEJS_INSTALL = yarn install
+	endif
+# Yarn berry cache
+	ifneq ($(call filter-false,$(CI)),)
+		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
+		YARN_ENABLE_GLOBAL_CACHE ?= false
 	endif
 else ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
 # Yarn
 	NODEJS_RUN := yarn run
-	ifneq ($(call filter-false,$(CI)),)
+# Yarn frozen mode
+	ifneq ($(call filter-false,$(NODEJS_FROZEN)),)
 		NODEJS_INSTALL = yarn install --frozen-file
-		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
-		YARN_ENABLE_GLOBAL_CACHE ?= false
 	else
 		NODEJS_INSTALL = yarn install
+	endif
+# Yarn cache
+	ifneq ($(call filter-false,$(CI)),)
+		YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
+		YARN_ENABLE_GLOBAL_CACHE ?= false
 	endif
 else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
 # PNPM
 	NODEJS_RUN := pnpm run
-	ifneq ($(call filter-false,$(CI)),)
+# PNPM frozen mode
+	ifneq ($(call filter-false,$(NODEJS_FROZEN)),)
 		NODEJS_INSTALL = pnpm install --frozen-file
-		PNPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/pnpm
 	else
 		NODEJS_INSTALL = pnpm install
+	endif
+# PNPM cache
+	ifneq ($(call filter-false,$(CI)),)
+		PNPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/pnpm
 	endif
 else
 # NPM should be used
 	NODEJS_RUN := npm run
-	ifneq ($(call filter-false,$(CI)),)
+# NPM frozen mode
+	ifneq ($(call filter-false,$(NODEJS_FROZEN)),)
 		NODEJS_INSTALL = npm ci
-		NPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/npm
 	else
 		NODEJS_INSTALL = npm install
+	endif
+# NPM cache
+	ifneq ($(call filter-false,$(CI)),)
+		NPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/npm
 	endif
 endif
 
