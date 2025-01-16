@@ -102,6 +102,11 @@ node_modules/.make-state: $(wildcard yarn.lock package-lock.json pnpm-lock.yaml)
 node-dependencies: node-setup node_modules/.make-state
 .dependencies:: node-dependencies
 
+#
+# Setup node
+#
+# This will install node and npm
+#
 .PHONY: node-setup
 node-setup: $(NODEJS_CACHE_PATH)/node-version
 
@@ -130,36 +135,56 @@ ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
 endif
 .setup:: node-setup # Add to `make setup`
 
+#
+# Install node dependencies (ex: npm install)
+#
+# This will install dependencies using $(NODEJS_PACKAGE_MANAGER). In CI mode, the lockfile update will be forbidden.
+#
 .PHONY: node-install
 node-install: node-setup
 	$(Q)$(RM) -f node_modules/.make-state
 	$(Q)$(MAKE) node-dependencies
 .install:: node-install	# Add `npm install` to `make install`
 
+#
+# Run npm lint script (ex: npm run lint)
+#
 .PHONY: node-lint
 node-lint: node-dependencies
 	@$(call log,info,"[NodeJS] Lint sources...",1)
 	$(Q)npm run lint --if-present
 .lint::	node-lint # Add `npm run lint` to `make lint`
 
+#
+# Run npm format script (ex: npm run format)
+#
 .PHONY: node-format
 node-format: node-dependencies
 	@$(call log,info,"[NodeJS] Format sources...",1)
 	$(Q)npm run format --if-present
 .format:: node-format # Add `npm run test` to `make test`
 
+#
+# Run npm test script (ex: npm run test)
+#
 .PHONY: node-test
 node-test: node-dependencies
 	@$(call log,info,"[NodeJS] Test sources...",1);
 	$(Q)npm run test
 .test:: node-test # Add npm test to `make test`
 
+#
+# Run npm test End to End script (ex: npm run test:e2e)
+#
 .PHONY: node-test-e2e
 node-test-e2e: node-dependencies
 	@$(call log,info,"[NodeJS] Test system...",1)
 	$(Q)npm run test:e2e
 .test-e2e:: node-test-e2e # Add rspec to `make test-e2e`
 
+#
+# Run npm clean script (ex: npm run clean)
+#
 .PHONY: node-clean
 node-clean: node-dependencies
 	@$(call log,info,"[NodeJS] Clean files...",1);
