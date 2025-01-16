@@ -6,8 +6,8 @@ HEROKU_CACHE_PATH := $(PROJECT_CACHE_PATH)/heroku
 HEROKU_API_KEY ?=
 ## Heroku default app prefix (default: $(CI_PROJECT_NAME))
 HEROKU_APP_PREFIX ?= $(CI_PROJECT_NAME)
-## Heroku default app suffix (default: -$(CI_ENVIRONMENT_NAME))
-HEROKU_APP_SUFFIX ?= -$(CI_ENVIRONMENT_NAME)
+## Heroku default app suffix (default: -$(CI_ENVIRONMENT_SLUG))
+HEROKU_APP_SUFFIX ?= -$(CI_ENVIRONMENT_SLUG)
 ## Heroku app name (default: $(HEROKU_APP_PREFIX)$(HEROKU_APP_SUFFIX))
 HEROKU_APP ?= $(HEROKU_APP_PREFIX)$(HEROKU_APP_SUFFIX)
 
