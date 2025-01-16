@@ -6,6 +6,9 @@ ${GIT_HOOKS_PATH}/.keep:
 	$(Q)${MKDIRP} ${GIT_HOOKS_PATH}
 	$(Q)${TOUCH} ${GIT_HOOKS_PATH}/.keep
 
+#
+# Configure git hooks to $(GIT_HOOKS_PATH) (.githooks/)
+#
 .PHONY: githooks-install
 githooks-install: ${GIT_HOOKS_PATH}/.keep
 ifneq ($(shell ${GIT} config core.hooksPath), $(GIT_HOOKS_PATH))

@@ -129,7 +129,9 @@ node_modules/.make-state: $(wildcard yarn.lock package-lock.json pnpm-lock.yaml)
 	$(Q)${NODEJS_INSTALL}
 	$(Q)${TOUCH} $@
 
+#
 # Install dependencies only if needed
+#
 .PHONY: node-dependencies
 node-dependencies: node-setup node_modules/.make-state
 .dependencies:: node-dependencies
