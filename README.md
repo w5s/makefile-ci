@@ -81,9 +81,13 @@ export CI_PROJECT_NAMESPACE ?=
 
 #### CircleCI
 
+For a new project we recommend to generate a new configuration :
+
 ```console
 make .circleci/config.yml
 ```
+
+For existing project, you can check the [CircleCI template](https://github.com/Captive-Studio/makefile-ci/blob/main/template/.circleci/config.yml.template#L0-L1) for some useful recipes
 
 ## Usage
 
