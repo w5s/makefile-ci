@@ -67,14 +67,14 @@ To change configuration, edit the file :
 - `<project_root>/config.mk`: for shared settings for everyone
 - `<project_root>/local.mk`: for local personal settings (this file should not be versioned)
 
-Minimal recommended configuration
+Minimal recommended `<project_root>/config.mk` configuration
 
 ```make
 # Project name will be used for app name in deployment, and docker image names, etc (ex: vesta)
-export CI_PROJECT_NAME ?=
+export CI_PROJECT_NAME ?= <my-project>
 
 # Project namespace (ex: Captive-Studio)
-export CI_PROJECT_NAMESPACE ?=
+export CI_PROJECT_NAMESPACE ?= <MyCompany>
 ```
 
 ### 3. CI configuration
