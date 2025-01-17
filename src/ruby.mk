@@ -78,7 +78,7 @@ ruby-setup: $(RUBY_CACHE_PATH)/ruby-version
 # Try installing node using $(RUBY_VERSION_MANAGER)
 ifeq ($(RUBY_VERSION),)
 	@$(call log,warn,"[Ruby] Cannot install ruby. Please set RUBY_VERSION or configure .tools-versions",1)
-else ifneq ($(shell ruby -v | awk '{ print $$2 }'),$(RUBY_VERSION))
+else ifneq ($(shell ruby -v 2>/dev/null | awk '{ print $$2 }'),$(RUBY_VERSION))
 	@$(call log,info,"[Ruby] Install Ruby with $(RUBY_VERSION_MANAGER)...",1)
 ifeq ($(RUBY_VERSION_MANAGER),asdf)
 	$(Q)$(ASDF) plugin add ruby
