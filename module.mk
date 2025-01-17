@@ -1,4 +1,6 @@
-SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+MAKEFILE_CI_DIR := $(dir $(dir $(lastword $(MAKEFILE_LIST))))
+MAKEFILE_CI_SRC := $(MAKEFILE_CI_DIR)src
+MAKEFILE_CI_BIN := $(MAKEFILE_CI_DIR)bin
 
 # Features detection
 
@@ -32,46 +34,46 @@ SCALINGO_ENABLED ?= false
 HEROKU_ENABLED ?= false
 
 # Include variables
-include $(SELF_DIR)src/functions.mk
-include $(SELF_DIR)src/variables.mk
+include $(MAKEFILE_CI_SRC)/functions.mk
+include $(MAKEFILE_CI_SRC)/variables.mk
 
 # Include workflow
-include $(SELF_DIR)src/workflow.mk
+include $(MAKEFILE_CI_SRC)/workflow.mk
 
 # Include template
-include $(SELF_DIR)src/template.mk
+include $(MAKEFILE_CI_SRC)/template.mk
 
 # Include each module
-include $(SELF_DIR)src/dotenv.mk
-include $(SELF_DIR)src/cache.mk
+include $(MAKEFILE_CI_SRC)/dotenv.mk
+include $(MAKEFILE_CI_SRC)/cache.mk
 
 ifneq ($(call filter-false,$(DOCKER_ENABLED)),)
-include $(SELF_DIR)src/docker.mk
-include $(SELF_DIR)src/docker-compose.mk
+include $(MAKEFILE_CI_SRC)/docker.mk
+include $(MAKEFILE_CI_SRC)/docker-compose.mk
 endif
 
 ifneq ($(call filter-false,$(DEVCONTAINER_ENABLED)),)
-include $(SELF_DIR)src/devcontainer.mk
+include $(MAKEFILE_CI_SRC)/devcontainer.mk
 endif
 
-include $(SELF_DIR)src/githooks.mk
+include $(MAKEFILE_CI_SRC)/githooks.mk
 
 ifneq ($(call filter-false,$(NODEJS_ENABLED)),)
-include $(SELF_DIR)src/node.mk
+include $(MAKEFILE_CI_SRC)/node.mk
 endif
 
 ifneq ($(call filter-false,$(RUBY_ENABLED)),)
-include $(SELF_DIR)src/ruby.mk
+include $(MAKEFILE_CI_SRC)/ruby.mk
 endif
 
 ifneq ($(call filter-false,$(COCOAPODS_ENABLED)),)
-include $(SELF_DIR)src/cocoapods.mk
+include $(MAKEFILE_CI_SRC)/cocoapods.mk
 endif
 
 ifneq ($(call filter-false,$(SCALINGO_ENABLED)),)
-include $(SELF_DIR)src/scalingo.mk
+include $(MAKEFILE_CI_SRC)/scalingo.mk
 endif
 
 ifneq ($(call filter-false,$(HEROKU_ENABLED)),)
-include $(SELF_DIR)src/heroku.mk
+include $(MAKEFILE_CI_SRC)/heroku.mk
 endif
