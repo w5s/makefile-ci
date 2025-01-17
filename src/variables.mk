@@ -1,19 +1,19 @@
 # Project paths
 
 ifeq ($(ASDF),)
-	ASDF = asdf
+	ASDF := asdf
 endif
 ifeq ($(MKDIRP),)
-	MKDIRP = mkdir -p
+	MKDIRP := mkdir -p
 endif
 ifeq ($(TOUCH),)
-	TOUCH = touch
+	TOUCH := touch
 endif
 ifeq ($(GIT),)
-	GIT = git
+	GIT := git
 endif
 ifeq ($(BUNDLE),)
-	BUNDLE = bundle
+	BUNDLE := bundle
 endif
 ifeq ($(DATE),)
 	DATE := date
