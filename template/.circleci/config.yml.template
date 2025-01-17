@@ -7,7 +7,6 @@
 version: 2.1
 orbs:
   asdf: rynkowsg/asdf@0.1.2
-  node: circleci/node@5.2.0
 commands:
   detect_lockfile:
     steps:
