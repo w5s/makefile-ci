@@ -125,6 +125,11 @@ CI_ENVIRONMENT_SLUG ?= $(call slugify, $(CI_ENVIRONMENT_NAME))
 export CI_ENVIRONMENT_SLUG
 CI_VARIABLES += CI_ENVIRONMENT_SLUG
 
+## The URL of the environment for this job.
+CI_ENVIRONMENT_URL ?=
+export CI_ENVIRONMENT_URL
+CI_VARIABLES += CI_ENVIRONMENT_URL
+
 ## The HTTP(S) address of the project.
 CI_PROJECT_URL ?= $(basename $(shell echo "$(shell ${GIT} remote get-url origin)" | sed -r 's:git@([^/]+)\:(.*):https\://\1/\2:g' ))
 export CI_PROJECT_URL
