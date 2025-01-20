@@ -44,7 +44,7 @@ CI_VARIABLES += CI
 CI_DEFAULT_BRANCH_LIST := main master
 
 ## The name of the project’s default branch.
-CI_DEFAULT_BRANCH ?=$(firstword $(foreach var,$(CI_DEFAULT_BRANCH_LIST), $(filter $(var),$(shell ${GIT} branch --list))))
+CI_DEFAULT_BRANCH ?= $(firstword $(foreach var,$(CI_DEFAULT_BRANCH_LIST), $(filter $(var),$(shell ${GIT} branch --list))))
 export CI_DEFAULT_BRANCH
 CI_VARIABLES += CI_DEFAULT_BRANCH
 
