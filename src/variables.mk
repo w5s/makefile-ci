@@ -212,39 +212,6 @@ endif
 export CI_BUILD_TYPE
 CI_VARIABLES += CI_BUILD_TYPE
 
-# Git variables
-
-## Current git branch
-GIT_BRANCH ?= $(CI_COMMIT_BRANCH)
-## Current git commit
-GIT_COMMIT ?= $(CI_COMMIT_SHA)
-# Possible default git branches
-# GIT_DEFAULT_BRANCH_LIST := main master next dev develop $(shell ${GIT} config --get 'init.defaultBranch')
-## Default git branch (default: main)
-GIT_DEFAULT_BRANCH ?= $(CI_DEFAULT_BRANCH)
-## List of git remotes
-# GIT_REMOTES ?= $(shell git remote -v | awk '{ print $$1; }' | sort | uniq)
-
-# https://github.com/semantic-release/git#environment-variables
-
-## The author name associated with commit
-GIT_AUTHOR_NAME ?=
-export GIT_AUTHOR_NAME
-
-## The author email associated with commit
-GIT_AUTHOR_EMAIL ?=
-export GIT_AUTHOR_EMAIL
-
-## The committer name associated with commit
-GIT_COMMITTER_NAME ?=
-export GIT_COMMITTER_NAME
-
-## The committer email associated with commit
-GIT_COMMITTER_EMAIL ?=
-export GIT_COMMITTER_EMAIL
-
-
-
 # Debug
 ##
 # DEBUG_BIND ?= 127.0.0.1
