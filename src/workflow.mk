@@ -150,6 +150,21 @@ develop.ci:
 .develop.post::
 	@:
 
+#-------------
+# SCAN
+#-------------
+.PHONY: scan scan.default scan.local scan.ci .scan.pre .scan .scan.post
+scan: .workflow-run-scan ## Scan code for potential issues
+scan.default: .scan.pre .scan .scan.post
+scan.ci: scan.default
+scan.local: scan.default
+.scan.pre::
+	@:
+.scan::
+	@:
+.scan.post::
+	@:
+
 # A list of variable names that will be displayed before deployment
 DEPLOY_VARIABLES := \
 	CI_ENVIRONMENT_URL
