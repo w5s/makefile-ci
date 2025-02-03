@@ -154,6 +154,14 @@ develop.ci:
 #-------------
 # SCAN
 #-------------
+#
+# To add a new target to scan
+#
+# my-target-scan:
+# 	@echo 'Scan!'
+#
+# MAKEFILE_SCAN_TARGETS += my-target-scan
+#
 .PHONY: scan scan.default scan.local scan.ci .scan.pre .scan .scan.post
 scan: .workflow-run-scan ## Scan code for potential issues
 scan.default: .scan.pre .scan .scan.post
@@ -161,8 +169,17 @@ scan.ci: scan.default
 scan.local: scan.default
 .scan.pre::
 	@:
-.scan::
-	@:
+.scan:
+	$(Q)FAILS=0; \
+	for target in $(MAKEFILE_SCAN_TARGETS); do \
+		$(MAKE) $$target || FAILS=1; \
+	done; \
+	if [ $$FAILS -eq 0 ]; then \
+		$(call log,info,"🎉 Everything is OK",1); \
+	else \
+		$(call log,fatal,"❌ Some problems need to be fixed",1); \
+		exit 1; \
+	fi
 .scan.post::
 	@:
 

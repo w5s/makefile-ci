@@ -27,4 +27,4 @@ xeol-scan: xeol-setup
 	@$(call log,info,"[Xeol] Scanning sources...",1)
 	$(Q)$(XEOL) "dir:." --quiet --output=table --fail-on-eol-found
 
-.scan:: xeol-scan # Register xeol as a target for .scan task
+MAKEFILE_SCAN_TARGETS += xeol-scan # Register xeol as a target for .scan task
