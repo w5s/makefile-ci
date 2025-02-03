@@ -33,6 +33,13 @@ SCALINGO_ENABLED ?= false
 ## Enable Heroku deployment
 HEROKU_ENABLED ?= false
 
+# Enable xeol by default
+XEOL_ENABLED ?= true
+# ifneq ($(wildcard .xeol.yaml .xeol/config.yaml),)
+# ## Enable xeol scanner
+# XEOL_ENABLED ?= false
+# endif
+
 # Include variables
 include $(MAKEFILE_CI_SRC)/functions.mk
 include $(MAKEFILE_CI_SRC)/variables.mk
@@ -76,4 +83,8 @@ endif
 
 ifneq ($(call filter-false,$(HEROKU_ENABLED)),)
 include $(MAKEFILE_CI_SRC)/heroku.mk
+endif
+
+ifneq ($(call filter-false,$(XEOL_ENABLED)),)
+include $(MAKEFILE_CI_SRC)/xeol.mk
 endif
