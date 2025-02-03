@@ -126,7 +126,8 @@ test.ci: test.default
 #-------------
 .PHONY: test-e2e test-e2e.default test-e2e.local test-e2e.ci .test-e2e.pre .test .test-e2e.post
 test-e2e: dependencies .workflow-run-test-e2e ## Run system tests (e2e)
-test-e2e.local: .test-e2e.pre .test-e2e .test-e2e.post
+test-e2e.default: .test-e2e.pre .test-e2e .test-e2e.post
+test-e2e.local: test-e2e.default
 test-e2e.ci: test-e2e.default
 .test-e2e.pre::
 	@:
