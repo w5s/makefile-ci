@@ -27,4 +27,18 @@ xeol-scan: xeol-setup
 	@$(call log,info,"[Xeol] Scanning sources...",1)
 	$(Q)$(XEOL) "dir:." --quiet --output=table --fail-on-eol-found
 
-MAKEFILE_SCAN_TARGETS += xeol-scan # Register xeol as a target for .scan task
+MAKEFILE_SCAN_TARGETS += xeol-scan # Register as a target for make scan task
+
+#
+# Report any error to be able to run xeol scan
+#
+.PHONY: xeol-doctor
+xeol-doctor:
+	@$(call log,info,"✓ Checking xeol command",1);
+	$(Q)command -v xeol >/dev/null 2>&1 || { \
+		$(call log,error,xeol command not found,2); \
+		$(call log,error,Run 'make setup to fix.',2); \
+		exit 1; \
+	}
+
+MAKEFILE_DOCTOR_TARGETS += xeol-doctor # Register as a target for make doctor task
