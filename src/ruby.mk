@@ -154,6 +154,8 @@ ruby-critic: ruby-dependencies
 	@$(call log,info,"[Ruby] Rubycritic...",1)
 #   $(Q)$(GIT) fetch origin $(CI_DEFAULT_BRANCH):$(CI_DEFAULT_BRANCH)
 	$(Q)$(RUBYCRITIC) $(RUBYCRITIC_FLAGS)
+
+MAKEFILE_SCAN_TARGETS += ruby-critic
 endif
 
 #
