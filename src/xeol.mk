@@ -37,7 +37,7 @@ xeol-doctor:
 	@$(call log,info,"✓ Checking xeol command",1);
 	$(Q)command -v xeol >/dev/null 2>&1 || { \
 		$(call log,error,xeol command not found,2); \
-		$(call log,error,Run 'make setup to fix.',2); \
+		$(call log,error,Run 'make setup' to fix.,2); \
 		exit 1; \
 	}
 
