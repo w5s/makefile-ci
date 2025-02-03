@@ -56,3 +56,17 @@ endif
 heroku-deploy: heroku-setup heroku-login
 	@$(call log,info,"[Heroku] Deploy $(HEROKU_APP)...",1)
 	$(Q)$(GIT) push --no-verify --force $(HEROKU_GIT_URL)/$(HEROKU_APP).git HEAD:main
+
+#
+# Report any error to be able to run heroku
+#
+.PHONY: heroku-doctor
+heroku-doctor:
+	@$(call log,info,"✓ Checking heroku command",1);
+	$(Q)command -v $(HEROKU) >/dev/null 2>&1 || { \
+		$(call log,error,heroku command not found,2); \
+		$(call log,error,Run 'make setup' to fix.,2); \
+		exit 1; \
+	}
+
+MAKEFILE_DOCTOR_TARGETS += heroku-doctor # Register as a target for make doctor task
