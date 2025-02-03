@@ -26,3 +26,5 @@ xeol-setup: $(MAKE_CACHE_PATH)/job/xeol-setup
 xeol-scan: xeol-setup
 	@$(call log,info,"[Xeol] Scanning sources...",1)
 	$(Q)$(XEOL) "dir:." --fail-on-eol-found
+
+.scan:: xeol-scan # Register xeol as a target for .scan task
