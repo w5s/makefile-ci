@@ -60,3 +60,17 @@ scalingo-deploy: scalingo-setup scalingo-archive
 	@$(call log,info,"[Scalingo] Deploy $(SCALINGO_APP)...",1)
 	$(Q)$(SCALINGO) --app $(SCALINGO_APP) --region=$(SCALINGO_REGION) deploy ${SCALINGO_ARCHIVE_FILE}
 .deploy::scalingo-deploy
+
+#
+# Report any error to be able to run scalingo
+#
+.PHONY: scalingo-doctor
+scalingo-doctor:
+	@$(call log,info,"✓ Checking scalingo command",1);
+	$(Q)command -v $(SCALINGO) >/dev/null 2>&1 || { \
+		$(call log,error,scalingo command not found,2); \
+		$(call log,error,Run 'make setup' to fix.,2); \
+		exit 1; \
+	}
+
+MAKEFILE_DOCTOR_TARGETS += scalingo-doctor # Register as a target for make doctor task
