@@ -1,6 +1,6 @@
 # Makefile CI module
 
-[![License][license-image]][license-url]
+[License][license-url]
 
 > Default makefile workflow for continuous integration local and remote (GitlabCI, CircleCI, etc)
 
@@ -129,19 +129,25 @@ As a consequence `make {{target}}` will automatically change mode when launched 
 
 Nevertheless it possible to run locally in CI mode :
 
-> [!WARNING]  
+> [!WARNING]
 > Can be useful to debug problems on CI, never use it on a daily basis !
 
 ```shell
 CI=1 make lint
 ```
 
+### Code quality / Audit
+
+#### `make lint` : Run all linters (ESLint, rubocop, etc)
+
+#### `make scan` : Scan code for issues (xeol, etc)
+
 ### Deploy
 
 #### `make deploy` : Deploy to an environment
 
-> [!WARNING]  
-> Make sure to have enabled at least one cloud provider 
+> [!WARNING]
+> Make sure to have enabled at least one cloud provider
 >
 > Example in `config.mk` to enable scalingo :
 >
@@ -163,17 +169,26 @@ TODO
 TODO
 
 ## License
+
 <!-- AUTO-GENERATED-CONTENT:START (PKG_JSON:template=[${license}][license-url] © ${author}) -->
+
 [MIT][license-url] © Captive Studio
+
 <!-- AUTO-GENERATED-CONTENT:END -->
 
 <!-- VARIABLES -->
 
 <!-- AUTO-GENERATED-CONTENT:START (PKG_JSON:template=[package-version-svg]: https://img.shields.io/npm/v/${name}.svg?style=flat-square) -->
+
 <!-- AUTO-GENERATED-CONTENT:END -->
+
 <!-- AUTO-GENERATED-CONTENT:START (PKG_JSON:template=[package-url]: https://www.npmjs.com/package/${name}) -->
+
 <!-- AUTO-GENERATED-CONTENT:END -->
+
 <!-- AUTO-GENERATED-CONTENT:START (PKG_JSON:template=[license-image]: https://img.shields.io/badge/license-${license}-green.svg?style=flat-square) -->
-[license-image]: https://img.shields.io/badge/license-MIT-green.svg?style=flat-square
+
 <!-- AUTO-GENERATED-CONTENT:END -->
+
+[license-image]: https://img.shields.io/badge/license-MIT-green.svg?style=flat-square
 [license-url]: ./LICENSE
