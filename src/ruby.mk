@@ -163,7 +163,7 @@ endif
 ruby-critic: ruby-dependencies
 ifneq ($(CI_DEFAULT_BRANCH), $(CI_COMMIT_BRANCH))
 	@$(call log,info,"[Ruby] RubyCritic...",1)
-	$(Q)$(GIT) fetch origin $(CI_DEFAULT_BRANCH):$(CI_DEFAULT_BRANCH)
+#	$(Q)$(GIT) fetch origin $(CI_DEFAULT_BRANCH):$(CI_DEFAULT_BRANCH)
 	$(Q)$(RUBYCRITIC) \
 		--branch $(CI_DEFAULT_BRANCH) \
 		--format $(RUBYCRITIC_FORMAT) \
