@@ -186,7 +186,7 @@ node-install: node-setup
 .PHONY: node-lint
 node-lint: node-dependencies
 	@$(call log,info,"[NodeJS] Lint sources...",1)
-	$(Q)$(NODEJS_RUN) lint --if-present
+	$(Q)$(NODEJS_RUN) lint
 .lint::	node-lint # Add `npm run lint` to `make lint`
 
 #
@@ -195,7 +195,7 @@ node-lint: node-dependencies
 .PHONY: node-format
 node-format: node-dependencies
 	@$(call log,info,"[NodeJS] Format sources...",1)
-	$(Q)$(NODEJS_RUN) format --if-present
+	$(Q)$(NODEJS_RUN) format
 .format:: node-format # Add `npm run test` to `make test`
 
 #
@@ -222,5 +222,5 @@ node-test-e2e: node-dependencies
 .PHONY: node-clean
 node-clean: node-dependencies
 	@$(call log,info,"[NodeJS] Clean files...",1);
-	$(Q)$(NODEJS_RUN) clean --if-present
+	$(Q)$(NODEJS_RUN) clean
 .clean:: node-clean # Add npm run clean to `make clean`
