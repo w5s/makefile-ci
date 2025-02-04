@@ -3,7 +3,8 @@ ifneq ($(wildcard .rubocop.yml),)
 endif
 
 ifneq ($(wildcard .rubycritic.yml),)
-	RUBYCRITIC_ENABLED := true
+## Enable Rubycritic (default: <detect .rubycritic.yml>)
+RUBYCRITIC_ENABLED ?= true
 endif
 
 ifneq ($(wildcard rakefile Rakefile rakefile.rb Rakefile.rb),)
@@ -41,14 +42,11 @@ BUNDLE_FORCE_RUBY_PLATFORM ?=
 
 BUNDLE_INSTALL := ${BUNDLE} install
 RUBOCOP := ${BUNDLE} exec rubocop
-RUBYCRITIC := ${BUNDLE} exec rubycritic
-# RUBYCRITIC_FLAGS :=
 RAKE := ${BUNDLE} exec rake
 
 ifneq ($(call filter-false,$(CI)),)
 	BUNDLE_FROZEN ?= true
 	BUNDLE_PATH ?= vendor/bundle
-	RUBYCRITIC_FLAGS += --mode-ci
 endif
 
 # export
@@ -145,15 +143,34 @@ endif
 
 # RubyCritic targets
 ifneq ($(call filter-false,$(RUBYCRITIC_ENABLED)),)
+RUBYCRITIC := $(BUNDLE) exec rubycritic
+RUBYCRITIC_FLAGS :=
+
+## RubyCritic format (html/json/console, default: console)
+RUBYCRITIC_FORMAT ?= console
+
+## RubyCritic branch (i.e. main)
+RUBYCRITIC_BRANCH ?= $(CI_DEFAULT_BRANCH)
+
+ifneq ($(call filter-false,$(CI)),)
+	RUBYCRITIC_FLAGS += --mode-ci
+endif
 
 #
-# Audit code using rubycritic
+# Audit code using RubyCritic
 #
 .PHONY: ruby-critic
 ruby-critic: ruby-dependencies
-	@$(call log,info,"[Ruby] Rubycritic...",1)
-#   $(Q)$(GIT) fetch origin $(CI_DEFAULT_BRANCH):$(CI_DEFAULT_BRANCH)
-	$(Q)$(RUBYCRITIC) $(RUBYCRITIC_FLAGS)
+ifneq ($(CI_DEFAULT_BRANCH), $(CI_COMMIT_BRANCH))
+	@$(call log,info,"[Ruby] RubyCritic...",1)
+	$(Q)$(GIT) fetch origin $(CI_DEFAULT_BRANCH):$(CI_DEFAULT_BRANCH)
+	$(Q)$(RUBYCRITIC) \
+		--branch $(CI_DEFAULT_BRANCH) \
+		--format $(RUBYCRITIC_FORMAT) \
+		$(RUBYCRITIC_FLAGS)
+else
+	@$(call log,warn,"[Ruby] Rubycritic skipped \(current is default branch\).",1)
+endif
 
 MAKEFILE_SCAN_TARGETS += ruby-critic
 endif
