@@ -1,6 +1,9 @@
 # @see https://github.com/xeol-io/xeol
 XEOL := xeol
 
+## Xeol name for the target
+XEOL_NAME ?= $(CI_PROJECT_PATH)
+
 # Fake target to setup xeol
 $(MAKE_CACHE_PATH)/job/xeol-setup: $(MAKE_CACHE_PATH)
 	$(Q)command -v xeol >/dev/null 2>&1 || { \
@@ -25,7 +28,7 @@ xeol-setup: $(MAKE_CACHE_PATH)/job/xeol-setup
 .PHONY: xeol-scan
 xeol-scan: xeol-setup
 	@$(call log,info,"[Xeol] Scanning sources...",1)
-	$(Q)$(XEOL) "dir:." --quiet --output=table --fail-on-eol-found
+	$(Q)$(XEOL) "dir:." --quiet --output=table --name=$(XEOL_NAME) --fail-on-eol-found
 
 MAKEFILE_SCAN_TARGETS += xeol-scan # Register as a target for make scan task
 
