@@ -20,6 +20,7 @@ CI_VARIABLES += CI_BUILD_TYPE
 $(CI_BUILD_NUMBER_FILE): $(MAKE_PIDFILE)
 	$(Q)$(MKDIRP) $(dir $@)
 	$(Q)echo "$$($(DATE) +%s)" > $@;
+	@$(call log,debug,[Make] CI_BUILD_NUMBER=$(CI_BUILD_NUMBER) saved to "$@",0)
 
 # Create or update make build-number file before each job.
 # This will ensure that the file always exists
