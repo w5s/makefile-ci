@@ -1,6 +1,11 @@
+# Directory where this makefile-ci was installed
 MAKEFILE_CI_DIR := $(dir $(dir $(lastword $(MAKEFILE_LIST))))
+# Directory containing makefile-ci sources (*.mk)
 MAKEFILE_CI_SRC := $(MAKEFILE_CI_DIR)src
+# Directory containing binaries used by makefiles
 MAKEFILE_CI_BIN := $(MAKEFILE_CI_DIR)bin
+# Directory containing template files used by makefiles
+MAKEFILE_CI_TEMPLATE := $(MAKEFILE_CI_DIR)template
 
 # Features detection
 
