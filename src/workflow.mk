@@ -12,7 +12,7 @@ all: setup dependencies lint ## Run all targets
 # 	@echo Before each !
 #
 before_each::
-	$(Q):
+	@$(call log,debug,[Make] before_each hook,0)
 
 # This will be run after each workflow job
 #
@@ -21,7 +21,7 @@ before_each::
 # 	@echo After each !
 #
 after_each::
-	$(Q):
+	@$(call log,debug,[Make] after_each hook,0)
 
 #-------------
 # SETUP
