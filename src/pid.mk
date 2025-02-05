@@ -10,7 +10,10 @@ MAKE_PIDFILE := $(MAKE_CACHE_PATH)/pid
 .PHONY: $(MAKE_PIDFILE)
 $(MAKE_PIDFILE):
 # Write pid file only if changed.
-	$(Q)echo "$(MAKE_PID)" | cmp -s - $@ || echo "$(MAKE_PID)" > $@
+	$(Q)echo "$(MAKE_PPID)" | cmp -s - $@ || \
+		(echo "$(MAKE_PPID)" > $@ && \
+			$(call log,debug,[Make] MAKE_PID=$(MAKE_PPID) saved to "$@",0) \
+		)
 
 
 # Create or update make pid file before each job.
