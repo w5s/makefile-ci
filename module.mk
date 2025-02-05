@@ -52,12 +52,11 @@ include $(MAKEFILE_CI_SRC)/variables.mk
 # Include workflow
 include $(MAKEFILE_CI_SRC)/workflow.mk
 
-# Include template
-include $(MAKEFILE_CI_SRC)/template.mk
-
 # Include each module
-include $(MAKEFILE_CI_SRC)/dotenv.mk
 include $(MAKEFILE_CI_SRC)/cache.mk
+include $(MAKEFILE_CI_SRC)/pid.mk
+include $(MAKEFILE_CI_SRC)/template.mk
+include $(MAKEFILE_CI_SRC)/dotenv.mk
 
 ifneq ($(call filter-false,$(DOCKER_ENABLED)),)
 include $(MAKEFILE_CI_SRC)/docker.mk
