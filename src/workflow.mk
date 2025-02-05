@@ -4,151 +4,151 @@ all: setup dependencies lint ## Run all targets
 #-------------
 # SETUP
 #-------------
-.PHONY: setup setup.default setup.local setup.ci .setup.pre .setup .setup.post
+.PHONY: setup setup.default setup.local setup.ci .setup.before .setup .setup.after
 setup: .workflow-run-setup ## Install global dependencies and setup the project
-setup.default: .setup.pre .setup .setup.post
+setup.default: .setup.before .setup .setup.after
 setup.local: setup.default
 setup.ci: setup.default
-.setup.pre::
+.setup.before::
 	@:
 .setup::
 	@:
-.setup.post::
+.setup.after::
 	@:
 
 #-------------
 # INSTALL
 #-------------
-.PHONY: install install.default install.local install.ci .install.pre .install .install.post
+.PHONY: install install.default install.local install.ci .install.before .install .install.after
 install: .workflow-run-install ## Install project dependencies (force installation)
-install.default: .install.pre .install .install.post
+install.default: .install.before .install .install.after
 install.local: install.default
 install.ci: install.default
-.install.pre::
+.install.before::
 	@:
 .install::
 	@:
-.install.post::
+.install.after::
 	@:
 
 #-------------
 # DEPENDENCIES
 #-------------
-.PHONY: dependencies dependencies.default dependencies.local dependencies.ci .dependencies.pre .dependencies .dependencies.post
+.PHONY: dependencies dependencies.default dependencies.local dependencies.ci .dependencies.before .dependencies .dependencies.after
 dependencies: .workflow-run-dependencies ## Ensure project dependencies are present (install only if needed)
-dependencies.default: .dependencies.pre .dependencies .dependencies.post
+dependencies.default: .dependencies.before .dependencies .dependencies.after
 dependencies.local: dependencies.default
 dependencies.ci: dependencies.default
-.dependencies.pre::
+.dependencies.before::
 	@:
 .dependencies::
 	@:
-.dependencies.post::
+.dependencies.after::
 	@:
 
 #-------------
 # BUILD
 #-------------
-.PHONY: build build.default build.local build.ci .build.pre .build .build.post
+.PHONY: build build.default build.local build.ci .build.before .build .build.after
 build: .workflow-run-build ## Build sources
-build.default: .build.pre .build .build.post
+build.default: .build.before .build .build.after
 build.local: build.default
 # build.ci: build.default # TODO: implement this
-.build.pre::
+.build.before::
 	@:
 .build::
 	@:
-.build.post::
+.build.after::
 	@:
 
 #-------------
 # CLEAN
 #-------------
-.PHONY: clean clean.default clean.local clean.ci .clean.pre .clean .clean.post
+.PHONY: clean clean.default clean.local clean.ci .clean.before .clean .clean.after
 clean: .workflow-run-clean ## Clean build files
-clean.default: .clean.pre .clean .clean.post
+clean.default: .clean.before .clean .clean.after
 clean.local: clean.default
 clean.ci: clean.default
-.clean.pre::
+.clean.before::
 	@:
 .clean::
 	@:
-.clean.post::
+.clean.after::
 	@:
 
 #-------------
 # LINT
 #-------------
-.PHONY: lint lint.default lint.local lint.ci .lint.pre .lint .lint.post
+.PHONY: lint lint.default lint.local lint.ci .lint.before .lint .lint.after
 lint: dependencies .workflow-run-lint ## Lint all source files
-lint.default: .lint.pre .lint .lint.post
+lint.default: .lint.before .lint .lint.after
 lint.local: lint.default
 lint.ci: lint.default
-.lint.pre::
+.lint.before::
 	@:
 .lint::
 	@:
-.lint.post::
+.lint.after::
 	@:
 
 #-------------
 # FORMAT
 #-------------
-.PHONY: format format.default format.local format.ci .format.pre .format .format.post
+.PHONY: format format.default format.local format.ci .format.before .format .format.after
 format: dependencies .workflow-run-format ## Format all source files
-format.default: .format.pre .format .format.post
+format.default: .format.before .format .format.after
 format.local: format.default
 format.ci: format.default
-.format.pre::
+.format.before::
 	@:
 .format::
 	@:
-.format.post::
+.format.after::
 	@:
 
 #-------------
 # TEST
 #-------------
-.PHONY: test test.default test.local test.ci .test.pre .test .test.post
+.PHONY: test test.default test.local test.ci .test.before .test .test.after
 test: dependencies .workflow-run-test ## Run unit tests
-test.default: .test.pre .test .test.post
+test.default: .test.before .test .test.after
 test.local: test.default
 test.ci: test.default
-.test.pre::
+.test.before::
 	@:
 .test::
 	@:
-.test.post::
+.test.after::
 	@:
 
 #-------------
 # TEST SYSTEM (E2E)
 #-------------
-.PHONY: test-e2e test-e2e.default test-e2e.local test-e2e.ci .test-e2e.pre .test .test-e2e.post
+.PHONY: test-e2e test-e2e.default test-e2e.local test-e2e.ci .test-e2e.before .test .test-e2e.after
 test-e2e: dependencies .workflow-run-test-e2e ## Run system tests (e2e)
-test-e2e.default: .test-e2e.pre .test-e2e .test-e2e.post
+test-e2e.default: .test-e2e.before .test-e2e .test-e2e.after
 test-e2e.local: test-e2e.default
 test-e2e.ci: test-e2e.default
-.test-e2e.pre::
+.test-e2e.before::
 	@:
 .test-e2e::
 	@:
-.test-e2e.post::
+.test-e2e.after::
 	@:
 
 #-------------
 # DEVELOP
 #-------------
-.PHONY: develop develop.default develop.local develop.ci .develop.pre .develop .develop.post
+.PHONY: develop develop.default develop.local develop.ci .develop.before .develop .develop.after
 develop: dependencies .workflow-run-develop ## Setups a local development environment
-develop.local: .develop.pre .develop .develop.post
+develop.local: .develop.before .develop .develop.after
 develop.ci:
 	@$(call log,warn,"[Develop] Job disabled in CI mode",0)
-.develop.pre::
+.develop.before::
 	@:
 .develop::
 	@:
-.develop.post::
+.develop.after::
 	@:
 
 #-------------
@@ -162,12 +162,12 @@ develop.ci:
 #
 # MAKEFILE_SCAN_TARGETS += my-target-scan
 #
-.PHONY: scan scan.default scan.local scan.ci .scan.pre .scan .scan.post
+.PHONY: scan scan.default scan.local scan.ci .scan.before .scan .scan.after
 scan: .workflow-run-scan ## Scan code for potential issues
-scan.default: .scan.pre .scan .scan.post
+scan.default: .scan.before .scan .scan.after
 scan.ci: scan.default
 scan.local: scan.default
-.scan.pre::
+.scan.before::
 	@:
 .scan:
 	$(Q)FAILS=0; \
@@ -180,7 +180,7 @@ scan.local: scan.default
 		$(call log,fatal,"❌ Some problems need to be fixed",1); \
 		exit 1; \
 	fi
-.scan.post::
+.scan.after::
 	@:
 
 # A list of variable names that will be displayed before deployment
@@ -190,9 +190,9 @@ DEPLOY_VARIABLES := \
 #-------------
 # DEPLOY
 #-------------
-.PHONY: deploy deploy.default deploy.local deploy.ci .deploy.pre .deploy .deploy.post
+.PHONY: deploy deploy.default deploy.local deploy.ci .deploy.before .deploy .deploy.after
 deploy: .workflow-run-deploy ## Deploy the application to the given environment
-deploy.default: .deploy.pre .deploy .deploy.post
+deploy.default: .deploy.before .deploy .deploy.after
 deploy.local: .deploy-check
 	$(Q)$(call log,warn,WARNING! This will deploy local files,1)
 	$(Q)read -r -p "Continue? [y/N]" REPLY;echo; \
@@ -221,39 +221,39 @@ ifeq ($(CI_ENVIRONMENT_NAME),local)
 	$(Q)exit 1;
 endif
 
-.deploy.pre::
+.deploy.before::
 	@:
 .deploy::
 	@:
-.deploy.post::
+.deploy.after::
 	@:
 
 #-------------
 # RESCUE
 #-------------
-.PHONY: rescue rescue.default rescue.local rescue.ci .rescue.pre .rescue .rescue.post
+.PHONY: rescue rescue.default rescue.local rescue.ci .rescue.before .rescue .rescue.after
 rescue: .workflow-run-rescue ## Clean everything in case of problem
-rescue.default: .rescue.pre .rescue .rescue.post
+rescue.default: .rescue.before .rescue .rescue.after
 rescue.local: rescue.default
 rescue.ci:
 	@$(call log,warn,"[Rescue] Job disabled in CI mode",0)
 
-.rescue.pre::
+.rescue.before::
 	@:
 .rescue::
 	@:
-.rescue.post::
+.rescue.after::
 	@:
 
 # Reinstall after rescue
-.rescue.pre::
+.rescue.before::
 	@$(call log,info,"[Git] Clean all local changes...",1)
 	$(Q)$(call log,warn,WARNING! This will remove all non commited git changes.,1)
 	$(Q)read -r -p "Continue? [y/N]" REPLY;echo; \
 	if [[ "$$REPLY" =~ ^[Yy]$$ ]]; then \
 		$(GIT) clean -fdx; \
 	fi
-.rescue.post:: dependencies
+.rescue.after:: dependencies
 
 # This job will run
 .PHONY: .workflow-run-%
