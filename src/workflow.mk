@@ -1,3 +1,7 @@
+# A common target to force rebuild
+# @see https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
+FORCE: ;
+
 .PHONY: all
 all: setup dependencies lint ## Run all targets
 
