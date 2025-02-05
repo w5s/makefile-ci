@@ -199,18 +199,6 @@ CI_APPLICATION_TAG ?= $(or $(CI_COMMIT_TAG), $(CI_COMMIT_SHA))
 export CI_APPLICATION_TAG
 CI_VARIABLES += CI_APPLICATION_TAG
 
-# CUSTOM variable : build type
-## Type of build (release/debug)
-CI_BUILD_TYPE ?=
-ifeq ($(CI_BUILD_TYPE),)
-	ifneq ($(call filter-false,$(CI)),)
-		CI_BUILD_TYPE = release
-	else
-		CI_BUILD_TYPE = debug
-	endif
-endif
-export CI_BUILD_TYPE
-CI_VARIABLES += CI_BUILD_TYPE
 
 # Debug
 ##

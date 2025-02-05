@@ -55,6 +55,7 @@ include $(MAKEFILE_CI_SRC)/workflow.mk
 # Include each module
 include $(MAKEFILE_CI_SRC)/cache.mk
 include $(MAKEFILE_CI_SRC)/pid.mk
+include $(MAKEFILE_CI_SRC)/build-info.mk
 include $(MAKEFILE_CI_SRC)/template.mk
 include $(MAKEFILE_CI_SRC)/dotenv.mk
 
