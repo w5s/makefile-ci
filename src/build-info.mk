@@ -47,6 +47,9 @@ CI_BUILD_VERSION_FILE := $(MAKE_CACHE_PATH)/build-version
 ## Unique build version (ex: 1.0.0+8fe0f61)
 CI_BUILD_VERSION ?= $(shell cat $(CI_BUILD_VERSION_FILE))
 
+export CI_BUILD_VERSION
+CI_VARIABLES += CI_BUILD_VERSION
+
 $(CI_BUILD_VERSION_FILE): $(VERSION_FILE) $(CI_BUILD_NUMBER_FILE) FORCE
 # Write pid file only if changed.
 	$(Q)if echo "$(CI_BUILD_VERSION_TEMPLATE)" | cmp -s - $@;then \
