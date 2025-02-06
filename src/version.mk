@@ -13,7 +13,7 @@ $(VERSION_FILE): FORCE
 	  echo "$(VERSION_DEFAULT)" > $@; \
 	fi
 
-# Target to read (or create a default) VERSION file at the root of repository
+# Target to read or create a default VERSION file at the root of repository
 # This version :
 #   - has a meaning for the project (e.g., "v1.0.0")
 #   - is used to generate a unique build-version
