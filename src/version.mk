@@ -21,5 +21,5 @@ $(VERSION_FILE): FORCE
 # Example:
 # 	make version # > 1.0.0-alpha.0
 .PHONY: version
-version: $(VERSION_FILE) ## Default target to print current version
+version: $(VERSION_FILE) ## Display app version (ex: 1.0.0)
 	@echo $(VERSION)
