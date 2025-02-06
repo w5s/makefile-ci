@@ -31,3 +31,10 @@ before_each:: $(CI_BUILD_NUMBER_FILE)
 CI_BUILD_NUMBER ?= $(shell cat $(CI_BUILD_NUMBER_FILE))
 export CI_BUILD_NUMBER
 CI_VARIABLES += CI_BUILD_NUMBER
+
+# Target that will create the current build number
+# WARNING: this implementation will recreate a new build number for every new make command
+# TODO: we should implement a special case for CI, that will use a previously generated file
+.PHONY: build-number
+build-number: $(CI_BUILD_NUMBER_FILE) ## Generate a new build number and display it in console
+	@echo $(CI_BUILD_NUMBER)
