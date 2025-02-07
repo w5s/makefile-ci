@@ -21,7 +21,7 @@ $(CI_BUILD_NUMBER_FILE): $(MAKE_PIDFILE)
 	@$(call log,debug,[Make] CI_BUILD_NUMBER=$(CI_BUILD_NUMBER) saved to "$@",0)
 
 # Update .cache/make/build-number file before each job.
-before_each:: $(CI_BUILD_NUMBER_FILE)
+.before_each:: $(CI_BUILD_NUMBER_FILE)
 	@:
 
 ## A unique identifier for this build, it can be used in ios, android version number
@@ -54,7 +54,7 @@ $(CI_BUILD_VERSION_FILE): $(VERSION_FILE) $(CI_BUILD_NUMBER_FILE) FORCE
 	fi
 
 # Update .cache/make/build-version file before each job.
-before_each:: $(CI_BUILD_VERSION_FILE)
+.before_each:: $(CI_BUILD_VERSION_FILE)
 
 # Target to read or create a .cache/make/build-version file containing the CI_BUILD_VERSION
 #

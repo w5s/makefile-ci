@@ -16,5 +16,5 @@ $(MAKE_PIDFILE): FORCE
 
 # Create or update make pid file before each job.
 # This will ensure that the file exists before each job
-before_each:: $(MAKE_PIDFILE)
+.before_each:: $(MAKE_PIDFILE)
 	@:
