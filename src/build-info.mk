@@ -13,8 +13,6 @@ ifeq ($(CI_BUILD_TYPE),)
 		CI_BUILD_TYPE = debug
 	endif
 endif
-export CI_BUILD_TYPE
-CI_VARIABLES += CI_BUILD_TYPE
 
 # Target generating the build number from current timestamp
 $(CI_BUILD_NUMBER_FILE): $(MAKE_PIDFILE)
@@ -28,8 +26,6 @@ before_each:: $(CI_BUILD_NUMBER_FILE)
 
 ## A unique identifier for this build, it can be used in ios, android version number
 CI_BUILD_NUMBER ?= $(shell cat $(CI_BUILD_NUMBER_FILE))
-export CI_BUILD_NUMBER
-CI_VARIABLES += CI_BUILD_NUMBER
 
 # Target that will create the current build number
 # WARNING: this implementation will recreate a new build number for every new make command
@@ -46,8 +42,6 @@ CI_BUILD_VERSION_FILE := $(MAKE_CACHE_PATH)/build-version
 
 ## Unique build version (ex: 1.0.0+8fe0f61)
 CI_BUILD_VERSION ?= $(shell cat $(CI_BUILD_VERSION_FILE))
-export CI_BUILD_VERSION
-CI_VARIABLES += CI_BUILD_VERSION
 
 # Target that will create the current build number only if needed
 $(CI_BUILD_VERSION_FILE): $(VERSION_FILE) $(CI_BUILD_NUMBER_FILE) FORCE
