@@ -94,3 +94,8 @@ endif
 ifneq ($(call filter-false,$(XEOL_ENABLED)),)
 include $(MAKEFILE_CI_SRC)/xeol.mk
 endif
+
+# End of all declarations
+
+# Export all CI_VARIABLES
+$(foreach var,$(CI_VARIABLES),$(eval export $(var)))
