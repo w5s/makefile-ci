@@ -44,7 +44,7 @@ CI_BUILD_VERSION_FILE := $(MAKE_CACHE_PATH)/build-version
 CI_BUILD_VERSION ?= $(shell cat $(CI_BUILD_VERSION_FILE) 2>/dev/null)
 
 # Target that will create the current build number only if needed
-$(CI_BUILD_VERSION_FILE): $(VERSION_FILE) $(CI_BUILD_NUMBER_FILE) FORCE
+$(CI_BUILD_VERSION_FILE): $(CI_BUILD_NUMBER_FILE) FORCE
 # Write pid file only if changed.
 	$(Q)if echo "$(CI_BUILD_VERSION_TEMPLATE)" | cmp -s - $@;then \
 		$(call log,debug,[Make] CI_BUILD_VERSION=$(CI_BUILD_VERSION_TEMPLATE) no changes,0); \
