@@ -107,7 +107,7 @@ else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
 	ifneq ($(call filter-false,$(NODEJS_FROZEN)),)
 		NODEJS_INSTALL := pnpm install --frozen-file
 	else
-		NODEJS_INSTALL := pnpm install
+		NODEJS_INSTALL := pnpm install --no-frozen-lockfile
 	endif
 # PNPM cache
 	ifneq ($(call filter-false,$(CI)),)
