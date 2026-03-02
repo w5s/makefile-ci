@@ -1,3 +1,7 @@
+ifeq ($(COREPACK_ENABLE_DOWNLOAD_PROMPT),)
+	COREPACK_ENABLE_DOWNLOAD_PROMPT := 0
+endif
+
 ## NodeJS cache path (default: .cache/node)
 NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 
@@ -28,9 +32,9 @@ endif
 
 # Corepack enable command
 ifeq ($(NODEJS_VERSION_MANAGER),asdf)
-	.NODEJS_INSTALL_PACKAGE_MANAGER_COMMAND = npm install -g $(NODEJS_PACKAGE_MANAGER_COMMAND) && asdf reshim nodejs
+	.NODEJS_INSTALL_PACKAGE_MANAGER_COMMAND = corepack enable && asdf reshim nodejs
 else
-	.NODEJS_INSTALL_PACKAGE_MANAGER_COMMAND = npm install -g $(NODEJS_PACKAGE_MANAGER_COMMAND)
+	.NODEJS_INSTALL_PACKAGE_MANAGER_COMMAND = corepack enable
 endif
 
 ## NodeJS version
