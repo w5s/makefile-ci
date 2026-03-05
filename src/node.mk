@@ -9,7 +9,7 @@ NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 ## NodeJS version manager used to install node (asdf, nvm, ...)
 NODEJS_VERSION_MANAGER ?= $(.NODEJS_VERSION_MANAGER)
 
-## NodeJS package manager (npm,pnpm,yarn,yarn-berry)
+## NodeJS package manager (npm,pnpm,yarn,yarn-berry,bun)
 NODEJS_PACKAGE_MANAGER ?=
 # Detect nodejs package manager
 ifeq ($(NODEJS_PACKAGE_MANAGER),)
@@ -24,6 +24,9 @@ ifeq ($(NODEJS_PACKAGE_MANAGER),)
 	else ifneq ($(wildcard pnpm-lock.yaml),)
 		NODEJS_PACKAGE_MANAGER := pnpm
 		NODEJS_PACKAGE_MANAGER_COMMAND := pnpm
+	else ifneq ($(wildcard bun.lock bun.lockb),)
+		NODEJS_PACKAGE_MANAGER := bun
+		NODEJS_PACKAGE_MANAGER_COMMAND := bun
 	else
 		NODEJS_PACKAGE_MANAGER := npm
 		NODEJS_PACKAGE_MANAGER_COMMAND := npm
@@ -118,6 +121,24 @@ else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
 		PNPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/pnpm
 	endif
 export PNPM_CONFIG_CACHE
+else ifeq ($(NODEJS_PACKAGE_MANAGER),bun)
+# Bun
+	NODEJS_RUN := bun run
+# Lockfile
+	NODEJS_LOCKFILE := bun.lock bun.lockb
+# State file
+	NODEJS_STATEFILE := node_modules/.bun.lock
+# Bun frozen mode
+	ifneq ($(call filter-false,$(NODEJS_FROZEN)),)
+		NODEJS_INSTALL := bun install --frozen-lockfile
+	else
+		NODEJS_INSTALL := bun install
+	endif
+# Bun cache
+	ifneq ($(call filter-false,$(CI)),)
+		BUN_INSTALL_CACHE_DIR ?= $(PROJECT_CACHE_PATH)/bun
+	endif
+export BUN_INSTALL_CACHE_DIR
 else
 # NPM should be used
 	NODEJS_RUN := npm run
@@ -170,7 +191,7 @@ node-dependencies: node-setup $(NODEJS_STATEFILE)
 #
 # Setup node
 #
-# This will install node and npm
+# This will install node and the configured package manager
 #
 .PHONY: node-setup
 node-setup: $(NODEJS_CACHE_PATH)/node-version
@@ -191,7 +212,7 @@ endif
 endif
 
 # Try installing package manager
-ifneq ($(NODEJS_PACKAGE_MANAGER),npm)
+ifneq ($(filter $(NODEJS_PACKAGE_MANAGER),npm),)
 # Only for asdf we have to reshim after corepack
 	$(Q)if ! $(NODEJS_PACKAGE_MANAGER_COMMAND) -v &>/dev/null; then \
 	  $(call log,info,"[NodeJS] Install $(NODEJS_PACKAGE_MANAGER)...",1); \
