@@ -80,11 +80,6 @@ ifeq ($(NODEJS_PACKAGE_MANAGER),yarn-berry)
 	else
 		NODEJS_INSTALL := yarn install
 	endif
-# Yarn berry cache
-	ifneq ($(call filter-false,$(CI)),)
-		export YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
-		export YARN_ENABLE_GLOBAL_CACHE ?= false
-	endif
 else ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
 # Yarn
 	NODEJS_RUN := yarn run
@@ -98,11 +93,6 @@ else ifeq ($(NODEJS_PACKAGE_MANAGER),yarn)
 	else
 		NODEJS_INSTALL := yarn install
 	endif
-# Yarn cache
-	ifneq ($(call filter-false,$(CI)),)
-		export YARN_CACHE_FOLDER ?= $(PROJECT_CACHE_PATH)/yarn
-		export YARN_ENABLE_GLOBAL_CACHE ?= false
-	endif
 else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
 # PNPM
 	NODEJS_RUN := pnpm run
@@ -115,10 +105,6 @@ else ifeq ($(NODEJS_PACKAGE_MANAGER),pnpm)
 		NODEJS_INSTALL := pnpm install --frozen-lockfile
 	else
 		NODEJS_INSTALL := pnpm install --no-frozen-lockfile
-	endif
-# PNPM cache
-	ifneq ($(call filter-false,$(CI)),)
-		PNPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/pnpm
 	endif
 export PNPM_CONFIG_CACHE
 else ifeq ($(NODEJS_PACKAGE_MANAGER),bun)
@@ -134,11 +120,6 @@ else ifeq ($(NODEJS_PACKAGE_MANAGER),bun)
 	else
 		NODEJS_INSTALL := bun install
 	endif
-# Bun cache
-	ifneq ($(call filter-false,$(CI)),)
-		BUN_INSTALL_CACHE_DIR ?= $(PROJECT_CACHE_PATH)/bun
-	endif
-export BUN_INSTALL_CACHE_DIR
 else
 # NPM should be used
 	NODEJS_RUN := npm run
@@ -152,20 +133,8 @@ else
 	else
 		NODEJS_INSTALL := npm install
 	endif
-# NPM cache
-	ifneq ($(call filter-false,$(CI)),)
-		NPM_CONFIG_CACHE ?= $(PROJECT_CACHE_PATH)/npm
-	endif
 export NPM_CONFIG_CACHE
 endif
-
-# Configure cypress cache folder (only for CI mode)
-ifeq ($(CYPRESS_CACHE_FOLDER),)
-	ifneq ($(call filter-false,$(CI)),)
-		CYPRESS_CACHE_FOLDER := $(PROJECT_CACHE_PATH)/cypress
-	endif
-endif
-export CYPRESS_CACHE_FOLDER
 
 # Create make cache directory
 $(NODEJS_CACHE_PATH):
