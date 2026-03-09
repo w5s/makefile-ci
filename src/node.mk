@@ -1,5 +1,5 @@
 ifeq ($(COREPACK_ENABLE_DOWNLOAD_PROMPT),)
-	COREPACK_ENABLE_DOWNLOAD_PROMPT := 0
+export COREPACK_ENABLE_DOWNLOAD_PROMPT := 0
 endif
 
 ## NodeJS cache path (default: .cache/node)
