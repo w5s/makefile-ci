@@ -148,6 +148,14 @@ $(NODEJS_CACHE_PATH)/node-version: $(NODEJS_CACHE_PATH)
 NODEJS_PACKAGE_JSON_FILES := $(shell find . -name package.json -not -path './node_modules/*' -not -path './.git/*')
 
 $(NODEJS_STATEFILE): $(wildcard $(NODEJS_LOCKFILE)) $(NODEJS_PACKAGE_JSON_FILES)
+# Try installing package manager
+ifeq ($(filter npm,$(NODEJS_PACKAGE_MANAGER)),)
+# Only for asdf we have to reshim after corepack
+	$(Q)if ! $(NODEJS_PACKAGE_MANAGER_COMMAND) -v &>/dev/null; then \
+		$(call log,info,"[NodeJS] Install $(NODEJS_PACKAGE_MANAGER)...",1); \
+		$(.NODEJS_INSTALL_PACKAGE_MANAGER_COMMAND); \
+	fi
+endif
 	@$(call log,info,"[NodeJS] Ensure dependencies....",1)
 	$(Q)${NODEJS_INSTALL}
 	$(Q)${TOUCH} $@
