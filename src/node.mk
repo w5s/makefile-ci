@@ -178,18 +178,21 @@ node-setup: $(NODEJS_CACHE_PATH)/node-version
 ifeq ($(NODEJS_VERSION),)
 	@$(call log,warn,"[NodeJS] Cannot install nodejs. Please set NODEJS_VERSION or configure .tools-versions",1)
 else ifneq ($(shell node -v 2>/dev/null),v$(NODEJS_VERSION))
-	ifeq ($(NODEJS_VERSION_MANAGER),)
+
+ifeq ($(NODEJS_VERSION_MANAGER),)
 		@$(call log,warn,"[NodeJS] No NODEJS_VERSION_MANAGER={asdf|nvm|...} was specified",1)
-	else
+else
 		@$(call log,info,"[NodeJS] Install NodeJS with $(NODEJS_VERSION_MANAGER)...",1)
 
-		ifeq ($(NODEJS_VERSION_MANAGER),asdf)
+ifeq ($(NODEJS_VERSION_MANAGER),asdf)
 			$(Q)$(ASDF) plugin add nodejs
 			$(Q)$(ASDF) install nodejs $(NODEJS_VERSION)
-		else
+else
 			@$(call log,info,"[NodeJS] Install NodeJS with $(NODEJS_VERSION_MANAGER)...",1)
-		endif
-	endif
+endif
+
+endif
+
 endif
 
 # Try installing package manager
