@@ -5,9 +5,8 @@ endif
 ## NodeJS cache path (default: .cache/node)
 NODEJS_CACHE_PATH ?= $(PROJECT_CACHE_PATH)/node
 
-.NODEJS_VERSION_MANAGER := $(call resolve-command,asdf nvm nodenv)
 ## NodeJS version manager used to install node (asdf, nvm, ...)
-NODEJS_VERSION_MANAGER ?= $(.NODEJS_VERSION_MANAGER)
+NODEJS_VERSION_MANAGER ?=
 
 ## NodeJS package manager (npm,pnpm,yarn,yarn-berry,bun)
 NODEJS_PACKAGE_MANAGER ?=
@@ -179,15 +178,18 @@ node-setup: $(NODEJS_CACHE_PATH)/node-version
 ifeq ($(NODEJS_VERSION),)
 	@$(call log,warn,"[NodeJS] Cannot install nodejs. Please set NODEJS_VERSION or configure .tools-versions",1)
 else ifneq ($(shell node -v 2>/dev/null),v$(NODEJS_VERSION))
-	@$(call log,info,"[NodeJS] Install NodeJS with $(NODEJS_VERSION_MANAGER)...",1)
+	ifeq ($(NODEJS_VERSION_MANAGER),)
+		@$(call log,warn,"[NodeJS] No NODEJS_VERSION_MANAGER={asdf|nvm|...} was specified",1)
+	else
+		@$(call log,info,"[NodeJS] Install NodeJS with $(NODEJS_VERSION_MANAGER)...",1)
 
-ifeq ($(NODEJS_VERSION_MANAGER),asdf)
-	$(Q)$(ASDF) plugin add nodejs
-	$(Q)$(ASDF) install nodejs $(NODEJS_VERSION)
-else
-	@$(call panic,[NodeJS] Unsupported nodejs version manager $(NODEJS_VERSION_MANAGER))
-endif
-
+		ifeq ($(NODEJS_VERSION_MANAGER),asdf)
+			$(Q)$(ASDF) plugin add nodejs
+			$(Q)$(ASDF) install nodejs $(NODEJS_VERSION)
+		else
+			@$(call log,info,"[NodeJS] Install NodeJS with $(NODEJS_VERSION_MANAGER)...",1)
+		endif
+	endif
 endif
 
 # Try installing package manager
