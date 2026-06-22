@@ -180,7 +180,7 @@ ifeq ($(NODEJS_VERSION),)
 else ifneq ($(shell node -v 2>/dev/null),v$(NODEJS_VERSION))
 
 ifeq ($(NODEJS_VERSION_MANAGER),)
-		@$(call log,warn,"[NodeJS] No NODEJS_VERSION_MANAGER={asdf|nvm|...} was specified",1)
+		@$(call log,warn,"[NodeJS] NODEJS_VERSION_MANAGER is not set.",1)
 else
 		@$(call log,info,"[NodeJS] Install NodeJS with $(NODEJS_VERSION_MANAGER)...",1)
 
