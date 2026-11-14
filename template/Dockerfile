@@ -72,7 +72,7 @@
 #     - Procfile is used for startup
 #
 
-ARG FROM_IMAGE=ubuntu:26.04@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944
+ARG FROM_IMAGE=ubuntu:26.04@sha256:065aa8626841f16057b78b027b464cd59c4fac36c204c72dcbf48d66f5fa8a96
 
 # Core dependencies (required for asdf)
 ARG APT_CORE_DEPENDENCIES="\
